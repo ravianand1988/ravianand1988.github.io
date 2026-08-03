@@ -1,0 +1,22 @@
+h2 {
+  font-size: 1.6rem;
+  margin-bottom: 1.75rem;
+}
+
+.group {
+  margin-bottom: 1.25rem;
+}
+
+.group h3 {
+  font-size: 0.85rem;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  margin-bottom: 0.6rem;
+}
+
+.tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
