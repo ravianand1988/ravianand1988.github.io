@@ -24,6 +24,7 @@ export class ExperienceComponent {
       role: 'Frontend Tech Lead (previously Sr. Frontend Engineer, Frontend Engineer)',
       dates: 'Oct 2019 – 2026',
       bullets: [
+        'Promoted from Senior Frontend Engineer to Frontend Tech Lead (Aug 2024), recognized for technical leadership and team impact',
         'Led frontend architecture and technical direction for a large-scale B2B logistics platform',
         'Managed and mentored a team of frontend engineers — hiring, onboarding, and performance guidance',
         'Defined coding standards, component-driven architecture, and code review practices across teams',
