@@ -6,26 +6,11 @@
   align-items: center;
 }
 
-.avatar-placeholder,
 .avatar {
-  width: 96px;
-  height: 96px;
+  width: 128px;
+  height: 128px;
   border-radius: 50%;
   margin-bottom: 1.25rem;
-}
-
-.avatar-placeholder {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: var(--accent-soft);
-  color: var(--accent);
-  font-weight: 700;
-  font-size: 1.3rem;
-  letter-spacing: 0.05em;
-}
-
-.avatar {
   object-fit: cover;
   border: 3px solid var(--card-bg);
   box-shadow: var(--shadow);
