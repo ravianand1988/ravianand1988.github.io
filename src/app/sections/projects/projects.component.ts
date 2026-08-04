@@ -40,5 +40,13 @@ export class ProjectsComponent {
       stack: ['Angular', '.NET', 'TypeScript', 'C#'],
       note: 'Repository private for now',
     },
+    {
+      title: 'ngx-jsbarcode',
+      description:
+        'An open-source Angular library wrapping JsBarcode for rendering 1-D barcodes as Angular components.',
+      stack: ['Angular', 'TypeScript'],
+      linkLabel: 'View on GitHub',
+      linkUrl: 'https://github.com/ravianand1988/ngx-jsbarcode',
+    },
   ];
 }
