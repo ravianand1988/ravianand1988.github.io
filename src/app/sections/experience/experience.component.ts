@@ -26,7 +26,7 @@ export class ExperienceComponent {
       bullets: [
         'Promoted from Senior Frontend Engineer to Frontend Tech Lead (Aug 2024), recognized for technical leadership and team impact',
         "Led frontend architecture and technical direction for byrd's B2B logistics platform (Partner, Customer, and Admin dashboards) serving 500+ customers and processing 100,000+ orders/month, spanning inbound, outbound, returns, and shipment workflows",
-        'Drove major platform initiatives end-to-end: the V2→V3 shipment/returns architecture migration and the Storage Zones feature that optimized warehouse picking',
+        'Drove major platform initiatives end-to-end: migrating domain state (auth, product, lot, storage) out of per-app code into shared versioned packages, and the Storage Zones feature that optimized warehouse picking',
         'Kept the Frontend codebase current through five consecutive major Angular upgrades (v13 → v17), including the typed-forms migration',
         "Contributed to and regularly reviewed pull requests for byrd's Java-based Android warehouse app (inbound/outbound, putaway, and returns picking/packing), then led its migration from Java to Kotlin",
         'Maintained Selenium-based end-to-end test coverage across the frontend projects; currently completing a Playwright fundamentals course to modernize the E2E stack',
