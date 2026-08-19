@@ -16,8 +16,9 @@ interface SkillGroup {
 export class SkillsComponent {
   groups: SkillGroup[] = [
     { label: 'Frontend', skills: ['Angular', 'TypeScript', 'JavaScript', 'RxJS', 'NgRx', 'HTML', 'CSS', 'Node.js'] },
-    { label: 'Backend', skills: ['Python', 'REST APIs'] },
-    { label: 'Cloud & DevOps', skills: ['AWS', 'Docker', 'CI/CD', 'Azure'] },
+    { label: 'Backend', skills: ['Python', 'Java', 'Kotlin', 'REST APIs'] },
+    { label: 'Testing', skills: ['Selenium', 'Playwright (in progress)', 'Jest'] },
+    { label: 'Cloud & DevOps', skills: ['AWS', 'Docker', 'Kubernetes', 'CI/CD', 'Azure'] },
     {
       label: 'Leadership',
       skills: ['Team Mentoring', 'Hiring & Onboarding', 'Coding Standards', 'Code Reviews', 'Stakeholder Management'],
