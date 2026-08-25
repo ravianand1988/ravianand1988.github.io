@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## What this is
 
-Ravi Anand Kumar's personal portfolio site — an Angular 17 single-page app deployed as a GitHub Pages **user site**
+Ravi Anand Kumar's personal portfolio site — an Angular 21 single-page app deployed as a GitHub Pages **user site**
 (https://ravianand1988.github.io/). It is a content site, not a product: most changes are copy edits to the data
 arrays and static markup in the section components, not new abstractions.
 
@@ -13,9 +13,9 @@ arrays and static markup in the section components, not new abstractions.
 ```bash
 npm start                                   # dev server on http://localhost:4200
 npm run build                               # production build → dist/ravianand1988.github.io/browser
-npm test                                    # Karma + Jasmine, opens Chrome, watch mode
-ng test --watch=false --browsers=ChromeHeadless           # single CI-style run
-ng test --watch=false --include='**/app.component.spec.ts' # single spec file
+npm test                                    # Vitest via @angular/build:unit-test; watches in a TTY
+ng test --no-watch                          # single CI-style run (jsdom under Node, no browser)
+ng test --no-watch --include='**/app.component.spec.ts'   # single spec file
 ```
 
 There is no linter or formatter configured. Formatting comes from [.editorconfig](.editorconfig): 2-space indent,
@@ -23,8 +23,10 @@ single quotes in TS, final newline, no trailing whitespace.
 
 ## Architecture
 
-Standalone components only — no NgModules, no router, no state library. [app.config.ts](src/app/app.config.ts) has an
-empty `providers` array on purpose.
+Standalone components only — no NgModules, no router, no state library. Components omit `standalone: true`;
+it has been the default since Angular 19. [app.config.ts](src/app/app.config.ts) provides only
+`provideBrowserGlobalErrorListeners()` — the Angular 21 scaffold default. There is no
+`provideZonelessChangeDetection()` call: zoneless is the framework default in v21 and zone.js is not installed.
 
 - [main.ts](src/main.ts) bootstraps `AppComponent` via `bootstrapApplication`.
 - [app.component.html](src/app/app.component.html) is the whole page: it stacks `<app-nav>` plus one component per
@@ -35,7 +37,7 @@ empty `providers` array on purpose.
   links to those `id`s. A new section is only reachable if its `id` matches a nav `href`. Routerless anchor navigation
   is deliberate — it keeps the site working on GitHub Pages with no server-side rewrite rules.
 - Content-heavy sections (experience, projects, skills) hold their data as typed arrays on the component class with a
-  small local `interface` (`ExperienceEntry`, `ProjectEntry`, `SkillGroup`) and render them with `*ngFor`. Edit the
+  small local `interface` (`ExperienceEntry`, `ProjectEntry`, `SkillGroup`) and render them with `@for`. Edit the
   array, not the template, to change content. Hero/about/contact/footer are static markup.
 
 ## Styling
