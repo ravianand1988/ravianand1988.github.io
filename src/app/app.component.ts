@@ -10,7 +10,6 @@ import { FooterComponent } from './sections/footer/footer.component';
 
 @Component({
   selector: 'app-root',
-  standalone: true,
   imports: [
     NavComponent,
     HeroComponent,

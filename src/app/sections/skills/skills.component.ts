@@ -1,5 +1,4 @@
 import { Component } from '@angular/core';
-import { CommonModule } from '@angular/common';
 
 interface SkillGroup {
   label: string;
@@ -8,8 +7,6 @@ interface SkillGroup {
 
 @Component({
   selector: 'app-skills',
-  standalone: true,
-  imports: [CommonModule],
   templateUrl: './skills.component.html',
   styleUrl: './skills.component.scss',
 })
