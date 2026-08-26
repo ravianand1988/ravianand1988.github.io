@@ -1,0 +1,40 @@
+.filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-1);
+  margin-top: var(--space-2);
+}
+
+.filters button {
+  font-family: var(--font-mono);
+  font-size: 0.74rem;
+  letter-spacing: 0.04em;
+  color: var(--ink-subtle);
+  background: transparent;
+  border: 1px solid var(--rule);
+  border-radius: 999px;
+  padding: 0.2rem 0.6rem;
+  cursor: pointer;
+}
+
+.filters button.on {
+  color: var(--paper);
+  background: var(--accent);
+  border-color: var(--accent);
+}
+
+.row-title {
+  font-weight: 500;
+  min-width: 18ch;
+  color: var(--ink);
+  text-decoration: none;
+}
+
+.row-title:hover {
+  color: var(--accent);
+}
+
+.row-desc {
+  color: var(--ink-subtle);
+  font-size: var(--step--1);
+}
