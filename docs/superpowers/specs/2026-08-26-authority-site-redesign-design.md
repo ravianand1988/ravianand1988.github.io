@@ -163,10 +163,13 @@ which means `npm run build` triggers it automatically and **the existing deploy
 workflow needs no change**.
 
 ```
-content/writing/*.md    ->  tools/build-content.mjs  ->  src/generated/*.ts
-content/projects/*.md                                    prerender-routes.txt
+content/writing/*.md    ->  tools/build-content.mjs  ->  src/generated/posts.ts
+content/projects/*.md                                    src/generated/slugs.ts
                                                          rss.xml, sitemap.xml
 ```
+
+`slugs.ts` is what `getPrerenderParams` imports to enumerate `/writing/:slug`
+and `/projects/:slug` at build time (see "Build and deploy" below).
 
 Dev dependencies only, nothing ships to the browser:
 
@@ -223,23 +226,57 @@ token styles live in global `styles/`, so no component needs to exceed it.
 
 ## Build and deploy
 
-Target configuration:
+**Verified by spike on 2026-08-26** (branch `spike/prerender-check`, kept for
+reference, not for merge). Two things this spec originally got wrong are
+corrected below.
 
-- `ng add @angular/ssr`
-- `outputMode: "static"`
-- `prerender: { discoverRoutes: true, routesFile: "prerender-routes.txt" }`
-- `404.html` copy of the index as a fallback for any route that escapes
-  prerendering
+Working configuration:
 
-Both builder options were verified present in the installed
-`@angular/build@21.2.18` schema. **Not yet verified:** the exact entry-point
-wiring Angular 21 requires for static output, and whether prerendered HTML
-lands in `dist/ravianand1988.github.io/browser` where `.github/workflows/deploy.yml`
-already points its artifact path.
+- `ng add @angular/ssr` installs `@angular/ssr@21.2.x` and scaffolds
+  `src/main.server.ts`, `src/app/app.config.server.ts`,
+  `src/app/app.routes.server.ts` and `src/server.ts`.
+- **It defaults to `outputMode: "server"` with an `ssr.entry`, which needs a
+  Node runtime and cannot work on GitHub Pages.** Change `outputMode` to
+  `"static"`, delete the `ssr` key, and delete `src/server.ts`. The `server`
+  option (`src/main.server.ts`) is still required — static mode uses it for the
+  prerender pass.
+- **Correction: the `prerender` build option is ignored.** The build prints
+  `The "prerender" option is not considered when "outputMode" is specified.`
+  Route selection comes from `serverRoutes` in `src/app/app.routes.server.ts`,
+  where the scaffolded default `{ path: '**', renderMode: RenderMode.Prerender }`
+  is what we want. There is no `routesFile`; drop that idea entirely.
+- **Correction: parameterized routes use `getPrerenderParams`.** Confirmed
+  present in the installed types as
+  `getPrerenderParams: () => Promise<Record<string, string>[]>`. So
+  `/writing/:slug` gets a `ServerRoute` entry whose `getPrerenderParams` returns
+  the slug list. The content build script therefore emits a generated TS module
+  of slugs for that function to import, not a text file for the builder.
+- `404.html` should be a copy of the emitted **`index.csr.html`**, not of
+  `index.html`. `index.csr.html` is the client-side-render shell; `index.html`
+  is the prerendered homepage and would show homepage content under every
+  unknown URL.
 
-Therefore implementation step one is a spike: get a single route prerendering
-and inspect the output tree before any design work. If the output path differs,
-the workflow's artifact path changes with it.
+Verified build output:
+
+```
+dist/ravianand1988.github.io/
+  browser/index.html                      <title>Spike home page</title>
+  browser/index.csr.html                  (CSR shell -> becomes 404.html)
+  browser/writing/hello-world/index.html  <title>Hello world, a spike post</title>
+  browser/{main-*.js, styles-*.css, favicon.ico, assets/}
+  prerendered-routes.json                 (outside browser/, not deployed)
+  3rdpartylicenses.txt                    (outside browser/, not deployed)
+```
+
+Three conclusions that de-risk the plan:
+
+1. Prerendering emits nested per-route `index.html` files, which is exactly what
+   GitHub Pages needs for clean URLs.
+2. Each file carries **its own** `<title>`, so per-route `Title` and `Meta` are
+   baked in at build time. The premise for choosing SSG holds.
+3. Output lands in `dist/ravianand1988.github.io/browser`, precisely where
+   `.github/workflows/deploy.yml` already points its artifact path. **The deploy
+   workflow needs no change.**
 
 Per-route `<title>`, meta description and `og:image` are set through Angular's
 `Title` and `Meta` services and baked into each static file at build time. This
@@ -394,10 +431,14 @@ Only Phase 1 needs a spec. Phases 2 and 3 are content and separate repos.
 
 ## Prerequisites and open questions
 
-**Blocking on merge order.** The Angular 21 migration is unmerged: `master` is
-still on Angular 17. This redesign hard-depends on Angular 21 for router and
-SSG. `chore/migrate_to_angular_second_latest-rk` must land on `master` before
-this work does. This spec's branch is based on that branch.
+~~**Blocking on merge order.**~~ **Resolved 2026-08-26.** The Angular 21
+migration was squash-merged to `master` as `43ce3f1`. Verified that the squash
+lost nothing: the diff between the old branch tip and the new `master` is empty
+across every tracked file. This spec's branch was rebased onto `master`.
+
+~~**Blocking on the unverified prerender wiring.**~~ **Resolved 2026-08-26** by
+the spike — see "Build and deploy" above. Prerendering works, per-route titles
+are baked in, and the deploy workflow needs no change.
 
 **Blocking on facts from Ravi.** None of these may be invented, per the content
 accuracy rule:
