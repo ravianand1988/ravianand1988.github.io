@@ -103,13 +103,17 @@ async function walk(dir) {
     const path = join(dir, entry.name);
     if (entry.isDirectory()) {
       found.push(...(await walk(path)));
+    } else if (entry.name === 'generated') {
+      continue;
     } else if (['.md', '.html', '.ts'].includes(extname(entry.name))) {
       found.push(path);
     }
   }
   return found;
 }
-for (const dir of ['content', join('src', 'app')]) {
+// Scan all of src/, not just src/app/: index.html is authored copy too, and an
+// em-dash hid there through several passes of this check.
+for (const dir of ['content', 'src']) {
   let files = [];
   try {
     files = await walk(dir);
