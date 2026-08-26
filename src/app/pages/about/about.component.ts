@@ -11,7 +11,7 @@ export class AboutComponent {
     inject(Seo).set({
       title: 'About Ravi Anand Kumar',
       description:
-        'Frontend Tech Lead in Berlin. Twelve years in software, the last seven in frontend architecture.',
+        'Frontend Tech Lead in Berlin. Twelve years in software, the last six in frontend architecture.',
       path: '/about',
     });
   }
