@@ -1,0 +1,79 @@
+h1 em {
+  font-style: italic;
+  color: var(--accent);
+}
+
+.support {
+  max-width: 52ch;
+  color: var(--ink-muted);
+  margin-top: var(--space-3);
+}
+
+.availability {
+  margin-top: var(--space-3);
+  padding-left: var(--space-1);
+  border-left: 2px solid var(--brass);
+  color: var(--accent);
+  font-size: var(--step--1);
+}
+
+.row-title {
+  font-weight: 500;
+  min-width: 18ch;
+  color: var(--ink);
+  text-decoration: none;
+}
+
+.row-title:hover {
+  color: var(--accent);
+}
+
+.row-desc {
+  color: var(--ink-subtle);
+  font-size: var(--step--1);
+}
+
+.more {
+  font-family: var(--font-mono);
+  font-size: 0.8rem;
+  margin-top: var(--space-2);
+}
+
+section p {
+  max-width: var(--measure-prose);
+  color: var(--ink-muted);
+}
+
+.bio-text > p:first-child {
+  margin-top: 0;
+}
+
+.bio-text > p + p {
+  margin-top: var(--space-2);
+}
+
+.bio {
+  display: flex;
+  gap: var(--space-3);
+  align-items: flex-start;
+}
+
+.portrait {
+  flex: none;
+  width: 132px;
+  height: 132px;
+  border: 1px solid var(--rule);
+  object-fit: cover;
+}
+
+@media (max-width: 640px) {
+  .bio {
+    flex-direction: column;
+    gap: var(--space-2);
+  }
+
+  .portrait {
+    width: 108px;
+    height: 108px;
+  }
+}

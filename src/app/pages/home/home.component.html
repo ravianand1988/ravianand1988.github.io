@@ -1,0 +1,90 @@
+<main class="wrap">
+  <p class="eyebrow">Frontend Tech Lead · Berlin</p>
+
+  <h1>I take frontends that have outgrown their structure and make them <em>workable again</em>.</h1>
+
+  <p class="support">
+    Shared design systems instead of copy-paste. Migrations that ship while the business keeps
+    running. AI tooling a team actually uses every day.
+  </p>
+
+  <p class="availability">
+    Looking for my next frontend lead role in Berlin, or remote within the DACH region.
+  </p>
+
+  <hr class="rule" />
+
+  <section class="work">
+    <p class="eyebrow">Selected work</p>
+    @for (project of work; track project.slug) {
+      <div class="row">
+        <a class="row-title" [routerLink]="['/projects', project.slug]">{{ project.title }}</a>
+        <span class="row-desc">{{ project.description }}</span>
+      </div>
+    } @empty {
+      <p>Case studies are being written.</p>
+    }
+  </section>
+
+  <hr class="rule" />
+
+  <section class="writing">
+    <p class="eyebrow">Recent writing</p>
+    @for (post of recent; track post.slug) {
+      <div class="row">
+        <a class="row-title" [routerLink]="['/writing', post.slug]">{{ post.title }}</a>
+        <span class="row-desc">{{ post.pillar }}</span>
+        <span class="row-meta">{{ post.date | date: 'MMM y' }}</span>
+      </div>
+    } @empty {
+      <p>First posts are on their way.</p>
+    }
+    <p class="more"><a routerLink="/writing">Everything I have written</a></p>
+  </section>
+
+  <hr class="rule" />
+
+  <section class="ai">
+    <p class="eyebrow">Building with AI</p>
+    <p>
+      I wrote a Claude Code plugin suite my engineering team used every day, for ticket refinement,
+      implementation planning, PR review and database migrations. Not demos. Things a real team kept
+      using.
+    </p>
+    <p class="more"><a routerLink="/ai">How it works, and how to use it</a></p>
+  </section>
+
+  <hr class="rule" />
+
+  <section class="career">
+    <p class="eyebrow">The short version</p>
+    <div class="bio">
+      <img
+        class="portrait"
+        src="/assets/photo.jpg"
+        width="500"
+        height="500"
+        alt="Ravi Anand Kumar"
+        loading="lazy"
+      />
+      <div class="bio-text">
+        <p>
+          I started out teaching. Before I wrote software for a living I spent nearly three years
+          training students and working professionals in C#, .NET and SQL, and mentoring the other
+          trainers doing it.
+        </p>
+        <p>
+          Then I went and built the things instead: loyalty and hospitality systems in C# and
+          ASP.NET, two years on a healthcare platform in Django and Vue, and from 2019 to 2026 at
+          byrd in Berlin, where I was promoted to Frontend Tech Lead and owned the design system and
+          frontend architecture behind a B2B logistics platform.
+        </p>
+        <p>
+          The teaching never really stopped. It turned into design systems, code review and hiring,
+          which are all the same job: making something legible to whoever has to work in it next.
+        </p>
+      </div>
+    </div>
+    <p class="more"><a routerLink="/about">More about me</a></p>
+  </section>
+</main>

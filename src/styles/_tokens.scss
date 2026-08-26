@@ -1,0 +1,45 @@
+:root {
+  --paper: #faf7f2;
+  --paper-raised: #ffffff;
+  --ink: #17130e;
+  --ink-muted: #4a4238;
+  --ink-subtle: #6b6252;
+  --meta: #8a7b65;
+  --rule: #dcd5c9;
+  --rule-soft: #eae4d9;
+  --accent: #7c2a20;
+  --brass: #c9a15b;
+
+  --font-display: 'Instrument Serif', Georgia, 'Times New Roman', serif;
+  --font-body: 'Geist', system-ui, -apple-system, sans-serif;
+  --font-mono: 'Geist Mono', ui-monospace, 'SF Mono', Menlo, monospace;
+
+  --step--1: clamp(0.82rem, 0.8rem + 0.1vw, 0.88rem);
+  --step-0: clamp(1rem, 0.97rem + 0.15vw, 1.06rem);
+  --step-1: clamp(1.2rem, 1.1rem + 0.4vw, 1.4rem);
+  --step-2: clamp(1.5rem, 1.3rem + 0.9vw, 2rem);
+  --step-3: clamp(2.1rem, 1.6rem + 2.2vw, 3.5rem);
+
+  --measure-prose: 68ch;
+  --measure-head: 24ch;
+  --space-1: 0.5rem;
+  --space-2: 1rem;
+  --space-3: 1.75rem;
+  --space-4: 3rem;
+  --space-5: 5rem;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --paper: #14110d;
+    --paper-raised: #1c1813;
+    --ink: #f0eae0;
+    --ink-muted: #a79b8a;
+    --ink-subtle: #8d8272;
+    --meta: #9c8e78;
+    --rule: #2e2820;
+    --rule-soft: #241f19;
+    --accent: #d9705e;
+    --brass: #c9a15b;
+  }
+}

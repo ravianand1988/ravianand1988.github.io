@@ -40,3 +40,12 @@ testem.log
 # System files
 .DS_Store
 Thumbs.db
+
+# brainstorming visual companion
+.superpowers/
+
+# build-time generated content modules and public files
+/src/generated/
+
+# TTF cache for the Open Graph image generator
+/.cache-fonts/
