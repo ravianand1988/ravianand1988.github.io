@@ -43,3 +43,6 @@ Thumbs.db
 
 # brainstorming visual companion
 .superpowers/
+
+# build-time generated content modules and public files
+/src/generated/

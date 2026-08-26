@@ -243,7 +243,10 @@ Append to `.gitignore`:
 
 Run: `npm run build`
 
-Expected: the build prints `Prerendered 2 static routes.` then `postbuild: wrote dist/ravianand1988.github.io/browser/404.html from index.csr.html`.
+Expected: the build prints `Prerendered 1 static route.` then `postbuild: wrote dist/ravianand1988.github.io/browser/404.html from index.csr.html`.
+
+One route, not two: the `**` wildcard has no concrete URL, so route discovery
+only finds `''`. Every later task that adds a concrete path raises this count.
 
 Verify:
 
