@@ -84,10 +84,13 @@ for (const file of ['index.html', 'about/index.html', 'ai/index.html']) {
   } catch {
     continue;
   }
+  // Both absolute (/assets/x) and root-relative (assets/x) forms. Angular
+  // templates commonly use the relative form, and an earlier version of this
+  // check only matched the absolute one, which let three missing SVGs through.
   for (const match of markup.matchAll(
-    /(?:href|src|content)="(?:https:\/\/ravianand1988\.github\.io)?(\/assets\/[^"]+)"/g,
+    /(?:href|src|srcset|content)="(?:https:\/\/ravianand1988\.github\.io)?\/?(assets\/[^"]+)"/g,
   )) {
-    referenced.add(match[1]);
+    referenced.add('/' + match[1]);
   }
 }
 for (const asset of referenced) {
