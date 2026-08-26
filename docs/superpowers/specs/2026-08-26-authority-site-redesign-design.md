@@ -66,9 +66,12 @@ contact page on a personal site is filler.
 1. Thesis. Hero sentence set large, two lines of support, one availability
    line. No centered avatar column.
 2. Selected work. Three items, hard cap. One line of *what*, one line of
-   *evidence*. Gerber leads because it is the only visual one. In Phase 1 its
-   evidence line points at a case study; the "live demo" label appears only
-   once the embedded demo ships in Phase 2.
+   *evidence*. **Phase 1 leads with the distribution ERP**, now that it is a
+   completed solo migration with a retired predecessor: it is the strongest
+   story and the one that most directly evidences the through-line. Gerber may
+   be promoted to first position in Phase 2, once its embedded demo exists and
+   the "visual and memorable" argument actually applies; in Phase 1 its
+   evidence line points at a case study, with no "live demo" label.
 3. Recent writing. Latest three with date and pillar.
 4. Building with AI. Short block leading with the concrete claim, linking `/ai`.
 5. Career as one paragraph. AppFlow to Assistr to byrd as narrative with the
@@ -264,8 +267,9 @@ current site compresses it into one sentence ending "Repository private for
 now". It gets a full case study at `/projects/distribution-erp`.
 
 **Business framing:** FMCG wholesale and distribution (Ravi's preference,
-2026-08-26). The `~90 consumer brands` figure on the current site is not
-verifiable from the repo and must be confirmed or dropped before publishing.
+2026-08-26). The `~90 consumer brands` figure is confirmed correct by Ravi
+(2026-08-26) and may be published; it is not derivable from the repo, so treat
+his confirmation as the source.
 
 **Timeline, corroborated by the repo:** dated schema snapshots in
 `Common Resources/` run from `AADB_whole_2017_07_26.sql` to
@@ -296,6 +300,35 @@ Rewrite and ARR as reverse proxy, services under NSSM. 103 PRs and 15
 versioned releases through 1.15.0. SPA feature modules: login, dashboard,
 customers, suppliers, businesses, sales, purchases, purchase-returns,
 inventory, ledger, expenses, reports, admin, account.
+
+**The migration is complete, not in progress.** Confirmed by Ravi 2026-08-26:
+the WinForms app is out of use. Verified against the 11 migration units in
+`docs/web-migration-plan.md` §4 — every one has shipped routes in the SPA
+(`login`, `change-password`, `admin/users`, `dashboard`, `customers` +
+`:id/account`, `products` + `:id/stock`, `measurement-units`, `suppliers` +
+`:id/account`, `purchases`, `purchase-returns`, `sales`, `admin/businesses`),
+plus `expenses` and `ledger`, which the desktop app never had. Together with
+RBAC and a real test suite, the web app exceeds the desktop app's scope rather
+than merely matching it.
+
+The site's current claim, "now leading a zero-downtime strangler-pattern
+migration ... with a planned SQL Server to PostgreSQL cutover", therefore
+undersells the work in two ways: the strangler migration is finished, and the
+Angular stack is not "in progress" but the system of record.
+
+Accurate framing: a WinForms desktop app that ran the business from 2017 was
+replaced, module by module, by an Angular 21 and ASP.NET Core web app now in
+daily use, delivered solo across 15 releases. The business never stopped
+trading, because both applications ran against the same SQL Server database
+throughout and the desktop app was only retired once the web app covered its
+work.
+
+**Consequence worth noting, and currently live.** Phase 9 (the PostgreSQL
+cutover) was deliberately sequenced last for one reason: the WinForms/EF6 app
+speaks only SQL Server and had to keep writing to the shared `AADB`. With the
+desktop app out of use that constraint is released, so the remaining work is a
+provider swap to Npgsql plus a data port and targeted type fix-ups. Nothing
+blocks it any more.
 
 **Deployment reality.** In daily use, deployed on a single Windows 11 machine.
 Self-hosting on one box is a deliberate cost decision for a family business,
@@ -369,11 +402,9 @@ this work does. This spec's branch is based on that branch.
 **Blocking on facts from Ravi.** None of these may be invented, per the content
 accuracy rule:
 
-1. ~~The ERP's Windows Forms to web story.~~ **Resolved 2026-08-26** — see
-   "Verified project facts" above. Two residual gaps: whether the WinForms app
-   is still in daily use alongside the web app (needed before claiming an
-   active strangler migration rather than a completed one), and whether the
-   `~90 consumer brands` figure is current.
+1. ~~The ERP's Windows Forms to web story.~~ **Fully resolved 2026-08-26** —
+   see "Verified project facts" above. The WinForms app is retired, module
+   parity is verified, and the `~90 consumer brands` figure is confirmed.
 2. Two launch posts. Cannot be written from a bullet list without inventing
    detail; needs one working session per post.
 3. An evidence line for each selected-work item. "Repository private" is not
