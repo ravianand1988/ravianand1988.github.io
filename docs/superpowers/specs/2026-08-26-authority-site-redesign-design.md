@@ -256,6 +256,93 @@ exists and contains that post's own title in its `<title>` tag.
 
 No broad component tests. On static pages they would be busywork.
 
+## Verified project facts: the distribution ERP
+
+Read directly from `/home/ravi-kumar/ravi/AyurvedicAushdhalaya` on 2026-08-26.
+This is the strongest evidence on the site for the through-line, and the
+current site compresses it into one sentence ending "Repository private for
+now". It gets a full case study at `/projects/distribution-erp`.
+
+**Business framing:** FMCG wholesale and distribution (Ravi's preference,
+2026-08-26). The `~90 consumer brands` figure on the current site is not
+verifiable from the repo and must be confirmed or dropped before publishing.
+
+**Timeline, corroborated by the repo:** dated schema snapshots in
+`Common Resources/` run from `AADB_whole_2017_07_26.sql` to
+`AADB_gst queries_2017_10_30.sql`, and assembly copyright headers read
+2015/2016. The desktop app was therefore already being schema-evolved in 2017,
+with GST support added that October, matching India's July 2017 GST rollout.
+Git history starts 2026-01-08 ("Add project files") and is an import, so it
+does not evidence the original build date. The site's "since 2018" is
+conservative; "in production since 2019" still needs Ravi's confirmation.
+
+**The legacy app.** .NET Framework 4.5.2 WinForms, DevExpress 18.2, EF6
+database-first, Unity IoC, SQL Server. No authentication, no tests, no
+migrations. Business rules fused into form code-behind: GST calculation,
+invoice totalling and stock movement live inside `SalesInvoice.cs` (~1,500
+LOC), `NewPurchase.cs` (~1,700 LOC) and `SalesReturnFormNew.cs` (~1,200 LOC).
+Repositories each open their own `AADbContext` with no shared unit of work, so
+multi-entity operations are not transactional.
+
+**The web tier.** Angular 21 SPA (`aa-web`), 201 files and roughly 32,300 lines
+of TS/HTML/SCSS, Angular Material and CDK, AG Grid 36, ESLint, Prettier,
+Vitest. ASP.NET Core on .NET 10 with EF Core migrations and a versioned schema
+baseline, ASP.NET Core Identity plus RBAC with public registration
+deliberately disabled (invite-only), QuestPDF and ClosedXML replacing
+XtraReport, iTextSharp and Office Interop, OpenAPI and health checks.
+Integration tests run against real SQL Server via Testcontainers plus
+`WebApplicationFactory`. Docker and compose, nginx-served SPA, IIS with URL
+Rewrite and ARR as reverse proxy, services under NSSM. 103 PRs and 15
+versioned releases through 1.15.0. SPA feature modules: login, dashboard,
+customers, suppliers, businesses, sales, purchases, purchase-returns,
+inventory, ledger, expenses, reports, admin, account.
+
+**Deployment reality.** In daily use, deployed on a single Windows 11 machine.
+Self-hosting on one box is a deliberate cost decision for a family business,
+not a limitation to hide. Databases are backed up nightly by
+`web/backup-aadb.ps1` and copied to OneDrive automatically; that script
+verifies each backup with `RESTORE VERIFYONLY` before copying it out of the
+container, and prunes past a retention window.
+
+**The architectural decision worth leading with.** PostgreSQL is the end state,
+but the engine switch is deliberately sequenced last, because the WinForms app
+speaks only SQL Server and must keep writing to the shared `AADB` throughout
+the transition. `docs/web-migration-plan.md` documents the alternative,
+running both engines with change-data-capture during the overlap, and rejects
+it explicitly as too risky for financial data. Staying in C# was also a
+de-risking choice: `decimal` money math is preserved exactly and the GST rules
+port near line-for-line instead of being re-derived.
+
+### Case study outline
+
+1. What it runs: GST invoicing, stock, sales and purchase orders, returns,
+   ledger, expenses, multi-business.
+2. The starting position, stated honestly, including the three large
+   code-behind files where the business rules actually live.
+3. Why the hard part is not CRUD but recovering rules from UI event handlers.
+4. The database sequencing constraint and the rejected CDC alternative.
+5. Why staying in C# removed the biggest correctness risk.
+6. What has shipped, module by module.
+7. How it is tested, deployed and backed up on one machine, on purpose.
+
+### Repo visibility
+
+Ravi intends to make the repo public later, after a security cleanup
+(2026-08-26). The case study is therefore written with no code links, and
+structured so a repository link can be added later without rewriting it.
+
+**Cleanup blocker found 2026-08-26.** Five tracked files in `Common Resources/`
+contain real business rows, not just schema: `AADB_whole_2017_09_12.sql` (173
+INSERTs), `AADB_whole_DataOnly_2017_09_12.sql` (168),
+`AADB_whole_2017_09_15.sql` (125), `AADB_whole_2017_08_03.sql` (18) and
+`AADB_whole_2017_07_26.sql` (13), inserting into `Customers`, `Suppliers`,
+`Employees`, `Orders`, `OrderDetails`, `GSTDetails`, `Products`, `Businesses`
+and `Companies`. They are present from the first commit, so deleting them in a
+new commit does not remove them from history. Publishing requires either a
+history rewrite with `git filter-repo` or a fresh repo with no history. There
+is no current exposure while the repo stays private. `web/backup-aadb.ps1` and
+the committed `appsettings*.json` were checked and are clean.
+
 ## Phasing
 
 **Phase 1 (this spec).** Design system, router plus SSG, new IA, rewritten hero
@@ -282,13 +369,17 @@ this work does. This spec's branch is based on that branch.
 **Blocking on facts from Ravi.** None of these may be invented, per the content
 accuracy rule:
 
-1. The ERP's Windows Forms to web story: what the original was, when the web
-   migration started, what is live now versus still on desktop, and whether
-   "zero downtime" is literal or approximate.
+1. ~~The ERP's Windows Forms to web story.~~ **Resolved 2026-08-26** — see
+   "Verified project facts" above. Two residual gaps: whether the WinForms app
+   is still in daily use alongside the web app (needed before claiming an
+   active strangler migration rather than a completed one), and whether the
+   `~90 consumer brands` figure is current.
 2. Two launch posts. Cannot be written from a bullet list without inventing
    detail; needs one working session per post.
 3. An evidence line for each selected-work item. "Repository private" is not
-   evidence. What can a stranger actually verify?
+   evidence. What can a stranger actually verify? Partly resolved for the ERP:
+   release count, module list and test/deploy setup are all verifiable claims
+   even while the repo is private.
 4. Confirmation that `Ravi_Anand_Kumar_CV_updated.docx` is still the master CV
    to link from `/about`.
 5. A better photograph, and a source for the `og:image`.
