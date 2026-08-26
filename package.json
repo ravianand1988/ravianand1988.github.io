@@ -9,7 +9,8 @@
     "test": "ng test",
     "postbuild": "node tools/postbuild.mjs && node tools/verify-styles.mjs",
     "test:tools": "vitest run --config vitest.tools.config.mts",
-    "prebuild": "node tools/build-content.mjs"
+    "prebuild": "node tools/build-content.mjs",
+    "pretest": "node tools/build-content.mjs"
   },
   "private": true,
   "dependencies": {
