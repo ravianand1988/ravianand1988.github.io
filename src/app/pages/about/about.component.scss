@@ -1,0 +1,14 @@
+.role-meta {
+  font-family: var(--font-mono);
+  font-size: 0.78rem;
+  color: var(--meta);
+  margin-top: 0;
+}
+
+.role-byrd {
+  padding-left: 1.1rem;
+}
+
+.role-byrd li + li {
+  margin-top: var(--space-1);
+}

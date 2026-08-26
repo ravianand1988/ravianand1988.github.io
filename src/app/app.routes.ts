@@ -26,6 +26,14 @@ export const routes: Routes = [
       import('./pages/project-detail/project-detail.component').then((m) => m.ProjectDetailComponent),
   },
   {
+    path: 'ai',
+    loadComponent: () => import('./pages/ai/ai.component').then((m) => m.AiComponent),
+  },
+  {
+    path: 'about',
+    loadComponent: () => import('./pages/about/about.component').then((m) => m.AboutComponent),
+  },
+  {
     path: '**',
     loadComponent: () => import('./pages/not-found/not-found.component').then((m) => m.NotFoundComponent),
     title: 'Page not found',
