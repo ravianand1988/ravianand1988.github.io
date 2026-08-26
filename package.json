@@ -7,7 +7,7 @@
     "build": "ng build",
     "watch": "ng build --watch --configuration development",
     "test": "ng test",
-    "postbuild": "node tools/postbuild.mjs"
+    "postbuild": "node tools/postbuild.mjs && node tools/verify-styles.mjs"
   },
   "private": true,
   "dependencies": {
