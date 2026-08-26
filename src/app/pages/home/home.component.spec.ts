@@ -24,6 +24,18 @@ describe('HomeComponent', () => {
     expect(items.length).toBeLessThanOrEqual(3);
   });
 
+  it('shows a portrait with real alt text and explicit dimensions', () => {
+    const fixture = TestBed.createComponent(HomeComponent);
+    fixture.detectChanges();
+    const portrait = (fixture.nativeElement as HTMLElement).querySelector('img.portrait');
+    expect(portrait).toBeTruthy();
+    expect(portrait?.getAttribute('alt')).toBe('Ravi Anand Kumar');
+    // Explicit width and height reserve the box, so the paragraph beside it
+    // does not jump once the image loads.
+    expect(portrait?.getAttribute('width')).toBeTruthy();
+    expect(portrait?.getAttribute('height')).toBeTruthy();
+  });
+
   it('states availability as a sentence, not a pill, and omits visa detail', () => {
     const fixture = TestBed.createComponent(HomeComponent);
     fixture.detectChanges();

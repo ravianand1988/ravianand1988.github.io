@@ -43,3 +43,29 @@ section p {
   max-width: var(--measure-prose);
   color: var(--ink-muted);
 }
+
+.bio {
+  display: flex;
+  gap: var(--space-3);
+  align-items: flex-start;
+}
+
+.portrait {
+  flex: none;
+  width: 132px;
+  height: 132px;
+  border: 1px solid var(--rule);
+  object-fit: cover;
+}
+
+@media (max-width: 640px) {
+  .bio {
+    flex-direction: column;
+    gap: var(--space-2);
+  }
+
+  .portrait {
+    width: 108px;
+    height: 108px;
+  }
+}

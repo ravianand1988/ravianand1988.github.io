@@ -84,7 +84,9 @@ for (const file of ['index.html', 'about/index.html', 'ai/index.html']) {
   } catch {
     continue;
   }
-  for (const match of markup.matchAll(/(?:href|content)="(?:https:\/\/ravianand1988\.github\.io)?(\/assets\/[^"]+)"/g)) {
+  for (const match of markup.matchAll(
+    /(?:href|src|content)="(?:https:\/\/ravianand1988\.github\.io)?(\/assets\/[^"]+)"/g,
+  )) {
     referenced.add(match[1]);
   }
 }
