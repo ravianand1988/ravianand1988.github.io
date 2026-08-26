@@ -4,6 +4,30 @@
     <h1>{{ entry.title }}</h1>
     <hr class="rule" />
     <article class="prose" [innerHTML]="body()"></article>
+
+    @if (showDemo()) {
+      <section class="demo-section">
+        <p class="eyebrow">Try it</p>
+        <h2>The viewer, running here</h2>
+        <p class="demo-lead">
+          The sample below is a real Altium-generated paste layer. Drop in your own Gerber file to
+          replace it. Everything happens in this tab: the file is parsed and drawn in the browser,
+          nothing is uploaded.
+        </p>
+
+        <!--
+          Two triggers on purpose. Viewport loads it the moment it scrolls into
+          view; idle guarantees it loads anyway, so a visitor never gets stuck
+          looking at the placeholder if the intersection observer never fires.
+          It stays a separate lazy chunk either way.
+        -->
+        @defer (on viewport; on idle) {
+          <app-gerber-demo />
+        } @placeholder {
+          <p class="demo-placeholder">Loading the viewer.</p>
+        }
+      </section>
+    }
   </main>
 } @else {
   <main class="wrap">

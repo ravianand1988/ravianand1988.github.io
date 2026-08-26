@@ -20,6 +20,15 @@
   --step-2: clamp(1.5rem, 1.3rem + 0.9vw, 2rem);
   --step-3: clamp(2.1rem, 1.6rem + 2.2vw, 3.5rem);
 
+  // Gerber demo. The canvas stays dark in both themes: copper geometry reads
+  // best on a dark ground, and a dark viewport inside a light page looks
+  // deliberate, the same way a code block does.
+  --canvas-bg: #17130e;
+  --warn-bg: #fdf3e0;
+  --warn-border: #e4c98d;
+  --warn-text: #6b4a12;
+  --ok: #3f6b48;
+
   --measure-prose: 68ch;
   --measure-head: 24ch;
   --space-1: 0.5rem;
@@ -41,5 +50,11 @@
     --rule-soft: #241f19;
     --accent: #d9705e;
     --brass: #c9a15b;
+
+    --canvas-bg: #0d0b08;
+    --warn-bg: #2a2114;
+    --warn-border: #4a3a1e;
+    --warn-text: #d9b877;
+    --ok: #7fae87;
   }
 }

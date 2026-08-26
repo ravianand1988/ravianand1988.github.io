@@ -31,8 +31,15 @@ renderer.
 That is the same problem as a design system, in a different costume: find the part
 that does not care about its consumer, and keep it that way.
 
-## Where it goes next
+## The parser is running on this page
 
-An interactive version of this belongs on this site rather than being described on it.
-Drop in a Gerber file, watch the board render. That is a better argument than any
-paragraph I can write about parsers, and it is the next thing I am building here.
+Describing a parser is weak evidence. Below is the actual thing: the same parsing core
+and canvas renderer, running in your browser, with a real Altium-generated paste layer
+loaded by default. Drop in your own Gerber file and it will draw that instead.
+
+Nothing is uploaded. The file is read, parsed and rendered in the tab, which is the
+whole point of having ported the core to TypeScript in the first place.
+
+The parser's own test suite came across with it, including ten checks that run against
+that sample file on every build of this site. If the parser regresses, the site stops
+building.

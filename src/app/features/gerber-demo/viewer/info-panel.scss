@@ -1,0 +1,152 @@
+:host {
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  border-left: 1px solid var(--rule);
+  background: var(--paper);
+}
+
+.tabs {
+  display: flex;
+  flex-wrap: wrap;
+  border-bottom: 1px solid var(--rule);
+}
+
+.tabs button {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  padding: 0.5rem 0.7rem;
+  border: 0;
+  background: transparent;
+  color: var(--ink-subtle);
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  letter-spacing: 0.04em;
+  cursor: pointer;
+}
+
+.tabs button.active {
+  color: var(--ink);
+  box-shadow: inset 0 -2px 0 var(--accent);
+}
+
+.count {
+  padding: 0 0.3rem;
+  border-radius: 999px;
+  background: var(--rule-soft);
+  font-size: 0.66rem;
+}
+
+.count.warn {
+  background: var(--warn-bg);
+  color: var(--warn-text);
+}
+
+.tab-body {
+  overflow: auto;
+  padding: var(--space-2);
+  font-size: var(--step--1);
+}
+
+.empty {
+  margin: 0;
+  color: var(--meta);
+}
+
+.empty.ok {
+  color: var(--ok);
+}
+
+.hint {
+  margin: 0 0 var(--space-1);
+  color: var(--meta);
+  font-size: 0.74rem;
+}
+
+.facts {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 0.3rem 0.75rem;
+  margin: 0;
+}
+
+.facts dt {
+  color: var(--meta);
+  font-size: 0.72rem;
+}
+
+.facts dd {
+  margin: 0;
+  color: var(--ink);
+}
+
+.mono {
+  font-family: var(--font-mono);
+  font-size: 0.76rem;
+}
+
+.dim {
+  color: var(--meta);
+}
+
+.apertures,
+.warnings,
+.comments {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.warnings li,
+.comments li {
+  padding: 0.3rem 0;
+  border-bottom: 1px solid var(--rule-soft);
+  color: var(--ink-muted);
+}
+
+.aperture {
+  display: grid;
+  grid-template-columns: 3.2rem 1fr auto;
+  gap: 0.2rem 0.6rem;
+  width: 100%;
+  padding: 0.4rem 0.3rem;
+  border: 0;
+  border-bottom: 1px solid var(--rule-soft);
+  background: transparent;
+  color: var(--ink);
+  text-align: left;
+  cursor: pointer;
+}
+
+.aperture:hover {
+  background: var(--rule-soft);
+}
+
+.aperture.selected {
+  background: var(--warn-bg);
+}
+
+.aperture .uses,
+.aperture .size {
+  color: var(--ink-subtle);
+  font-size: 0.72rem;
+}
+
+.aperture .detail {
+  grid-column: 1 / -1;
+  font-size: 0.7rem;
+}
+
+.aperture .detail.error {
+  color: var(--accent);
+}
+
+h3 {
+  margin: var(--space-2) 0 var(--space-1);
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--meta);
+}

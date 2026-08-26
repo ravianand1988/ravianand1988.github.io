@@ -10,7 +10,8 @@
     "postbuild": "node tools/postbuild.mjs && node tools/verify-styles.mjs && node tools/verify-build.mjs",
     "test:tools": "vitest run --config vitest.tools.config.mts",
     "prebuild": "node tools/build-content.mjs",
-    "pretest": "node tools/build-content.mjs"
+    "pretest": "node tools/build-content.mjs",
+    "prestart": "node tools/build-content.mjs"
   },
   "private": true,
   "dependencies": {

@@ -59,3 +59,28 @@
   text-transform: uppercase;
   color: var(--meta);
 }
+
+// The Gerber case study renders a live demo below its prose. The section needs
+// to break out of the prose measure, since the viewer wants the full column.
+.demo-section {
+  margin-top: var(--space-5);
+  padding-top: var(--space-3);
+  border-top: 1px solid var(--rule);
+}
+
+.demo-lead {
+  max-width: var(--measure-prose);
+  color: var(--ink-muted);
+  margin: 0 0 var(--space-3);
+}
+
+.demo-placeholder {
+  margin: 0;
+  padding: var(--space-4) 0;
+  color: var(--meta);
+  font-family: var(--font-mono);
+  font-size: 0.78rem;
+  text-align: center;
+  border: 1px dashed var(--rule);
+  border-radius: 6px;
+}
