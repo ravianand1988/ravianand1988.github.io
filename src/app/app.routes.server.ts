@@ -1,5 +1,5 @@
 import { RenderMode, ServerRoute } from '@angular/ssr';
-import { writingSlugs } from '../generated/slugs';
+import { projectSlugs, writingSlugs } from '../generated/slugs';
 
 export const serverRoutes: ServerRoute[] = [
   {
@@ -7,6 +7,13 @@ export const serverRoutes: ServerRoute[] = [
     renderMode: RenderMode.Prerender,
     async getPrerenderParams() {
       return writingSlugs.map((slug) => ({ slug }));
+    },
+  },
+  {
+    path: 'projects/:slug',
+    renderMode: RenderMode.Prerender,
+    async getPrerenderParams() {
+      return projectSlugs.map((slug) => ({ slug }));
     },
   },
   {

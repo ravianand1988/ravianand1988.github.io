@@ -1,0 +1,14 @@
+<main class="wrap">
+  <p class="eyebrow">Projects</p>
+  <h1>Selected work.</h1>
+  <hr class="rule" />
+
+  @for (project of projects; track project.slug) {
+    <div class="row">
+      <a class="row-title" [routerLink]="['/projects', project.slug]">{{ project.title }}</a>
+      <span class="row-desc">{{ project.description }}</span>
+    </div>
+  } @empty {
+    <p>Nothing here yet.</p>
+  }
+</main>

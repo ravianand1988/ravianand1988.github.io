@@ -1,0 +1,14 @@
+@if (project(); as entry) {
+  <main class="wrap">
+    <p class="eyebrow">{{ entry.pillar }}</p>
+    <h1>{{ entry.title }}</h1>
+    <hr class="rule" />
+    <article class="prose" [innerHTML]="body()"></article>
+  </main>
+} @else {
+  <main class="wrap">
+    <p class="eyebrow">404</p>
+    <h1>That project is not here.</h1>
+    <p><a href="/projects">See selected work</a></p>
+  </main>
+}
