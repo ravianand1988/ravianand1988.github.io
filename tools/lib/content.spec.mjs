@@ -4,6 +4,7 @@ import {
   isPublished,
   byDateDesc,
   assertEntry,
+  normalizeDate,
   buildRssXml,
   buildSitemapXml,
 } from './content.mjs';
@@ -40,6 +41,30 @@ describe('byDateDesc', () => {
       '2026-05-04',
       '2026-01-01',
     ]);
+  });
+});
+
+describe('normalizeDate', () => {
+  // gray-matter's YAML parser turns an unquoted `date: 2026-08-26` into a JS
+  // Date, so frontmatter reaches us as either a Date or a string.
+  it('formats a Date as an ISO day in UTC', () => {
+    expect(normalizeDate(new Date('2026-08-26T00:00:00Z'))).toBe('2026-08-26');
+  });
+
+  it('does not shift the day for a Date created in a positive-offset zone', () => {
+    expect(normalizeDate(new Date(Date.UTC(2026, 7, 26, 0, 0, 0)))).toBe('2026-08-26');
+  });
+
+  it('passes an already-ISO string through untouched', () => {
+    expect(normalizeDate('2026-08-26')).toBe('2026-08-26');
+  });
+
+  it('trims a quoted string', () => {
+    expect(normalizeDate('  2026-08-26  ')).toBe('2026-08-26');
+  });
+
+  it('returns an empty string for a missing value, so assertEntry reports it', () => {
+    expect(normalizeDate(undefined)).toBe('');
   });
 });
 

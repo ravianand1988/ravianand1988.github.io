@@ -33,6 +33,11 @@
                 "glob": "*.woff2",
                 "input": "src/fonts",
                 "output": "/assets/fonts"
+              },
+              {
+                "glob": "*.xml",
+                "input": "src/generated/public",
+                "output": "/"
               }
             ],
             "styles": [

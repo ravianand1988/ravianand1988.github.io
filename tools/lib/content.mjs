@@ -22,6 +22,16 @@ export function byDateDesc(a, b) {
 
 const ISO_DATE = /^\d{4}-\d{2}-\d{2}$/;
 
+// Frontmatter dates arrive as either a Date or a string: gray-matter's YAML
+// parser converts an unquoted `date: 2026-08-26` into a Date. Format via UTC
+// getters so a local timezone offset can never shift the day.
+export function normalizeDate(value) {
+  if (value instanceof Date) {
+    return value.toISOString().slice(0, 10);
+  }
+  return String(value ?? '').trim();
+}
+
 export function assertEntry(entry, sourcePath) {
   for (const field of ['title', 'description', 'date', 'pillar']) {
     if (!entry[field]) {
