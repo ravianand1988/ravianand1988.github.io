@@ -2,17 +2,10 @@
 // 'woff2-variations' keyword: the weight range on the descriptor is what
 // declares the variable axis, and some browsers ignore the legacy format.
 @font-face {
-  font-family: 'Instrument Serif';
-  src: url('/assets/fonts/instrument-serif-400.woff2') format('woff2');
-  font-weight: 400;
+  font-family: 'Archivo';
+  src: url('/assets/fonts/archivo-variable.woff2') format('woff2');
+  font-weight: 400 700;
   font-style: normal;
-  font-display: swap;
-}
-@font-face {
-  font-family: 'Instrument Serif';
-  src: url('/assets/fonts/instrument-serif-400-italic.woff2') format('woff2');
-  font-weight: 400;
-  font-style: italic;
   font-display: swap;
 }
 @font-face {
@@ -47,22 +40,38 @@ body {
 }
 
 body {
-  background: var(--paper);
+  background: var(--bg);
   color: var(--ink);
   font-family: var(--font-body);
   font-size: var(--step-0);
   line-height: 1.6;
 }
 
+// A grotesk needs weight and negative tracking where the serif carried the
+// headline on contrast alone. 400 would read as body copy at these sizes.
 h1,
 h2,
 h3 {
   font-family: var(--font-display);
-  font-weight: 400;
-  line-height: 1.06;
-  letter-spacing: -0.015em;
+  font-weight: 600;
+  line-height: 1.1;
+  letter-spacing: -0.025em;
   margin: 0 0 var(--space-2);
   max-width: var(--measure-head);
+  text-wrap: balance;
+}
+
+h1 {
+  font-weight: 700;
+}
+
+// Archivo is roman only, so italic here would be a synthesised oblique and it
+// looks like one. Emphasis in a headline becomes colour instead.
+h1 em,
+h2 em,
+h3 em {
+  font-style: normal;
+  color: var(--accent);
 }
 
 h1 {
@@ -99,7 +108,7 @@ a {
 
 .rule {
   height: 1px;
-  background: var(--rule);
+  background: var(--border);
   border: 0;
   margin: var(--space-4) 0 var(--space-3);
 }
@@ -109,7 +118,7 @@ a {
   gap: var(--space-3);
   align-items: baseline;
   padding: 0.7rem 0;
-  border-bottom: 1px solid var(--rule-soft);
+  border-bottom: 1px solid var(--border-soft);
 }
 
 .row:last-child {

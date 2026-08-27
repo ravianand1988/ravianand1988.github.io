@@ -1,33 +1,62 @@
+// Core & Consumers. See docs/superpowers/specs/2026-08-27-core-and-consumers-design.md
+//
+// Cool blue-biased neutrals so the ground reads as chosen rather than inherited,
+// and one warm chroma. Brass is the only accent colour on the site; the semantic
+// warn and ok tokens exist for state and never stand in for it.
+//
+// The light inks and the brass are set by contrast measurement, not by eye. They
+// are used on 11-12px mono labels, so each one clears 4.5:1 against every surface
+// it can sit on: --bg, --panel and --surface. Verified values are in the spec.
+// If you change one, re-measure it against all three.
 :root {
-  --paper: #faf7f2;
-  --paper-raised: #ffffff;
-  --ink: #17130e;
-  --ink-muted: #4a4238;
-  --ink-subtle: #6b6252;
-  --meta: #8a7b65;
-  --rule: #dcd5c9;
-  --rule-soft: #eae4d9;
-  --accent: #7c2a20;
-  --brass: #c9a15b;
+  --bg: #eef2f6;
+  --surface: #ffffff;
+  --panel: #e3e9ef;
 
-  --font-display: 'Instrument Serif', Georgia, 'Times New Roman', serif;
+  --ink: #0d141b;
+  --ink-muted: #45525f;
+  --ink-subtle: #55636f;
+  --meta: #5a6874;
+
+  --border: #cfd9e2;
+  --border-soft: #e0e7ee;
+
+  // Interactive brass: links, focus rings, the trace in the system graph.
+  --accent: #855e1e;
+  // Alias, not a second colour. Kept because components already reference it and
+  // "brass" says what it is where "accent" only says what it does. Resolves at
+  // use time, so the dark override of --accent carries through.
+  --brass: var(--accent);
+  --brass-wash: #f3ead8;
+
+  --font-display: 'Archivo', 'Helvetica Neue', Arial, sans-serif;
   --font-body: 'Geist', system-ui, -apple-system, sans-serif;
   --font-mono: 'Geist Mono', ui-monospace, 'SF Mono', Menlo, monospace;
 
-  --step--1: clamp(0.82rem, 0.8rem + 0.1vw, 0.88rem);
+  // Retuned for a sans display face. The previous scale was set for Instrument
+  // Serif, and a grotesk at the same size carries far more visual weight, so the
+  // top of the scale comes down rather than up.
+  --step--1: clamp(0.8rem, 0.78rem + 0.1vw, 0.86rem);
   --step-0: clamp(1rem, 0.97rem + 0.15vw, 1.06rem);
-  --step-1: clamp(1.2rem, 1.1rem + 0.4vw, 1.4rem);
-  --step-2: clamp(1.5rem, 1.3rem + 0.9vw, 2rem);
-  --step-3: clamp(2.1rem, 1.6rem + 2.2vw, 3.5rem);
+  --step-1: clamp(1.15rem, 1.08rem + 0.35vw, 1.35rem);
+  --step-2: clamp(1.4rem, 1.22rem + 0.8vw, 1.9rem);
+  --step-3: clamp(1.95rem, 1.5rem + 2vw, 3.1rem);
 
   // Gerber demo. The canvas stays dark in both themes: copper geometry reads
   // best on a dark ground, and a dark viewport inside a light page looks
   // deliberate, the same way a code block does.
-  --canvas-bg: #17130e;
-  --warn-bg: #fdf3e0;
-  --warn-border: #e4c98d;
-  --warn-text: #6b4a12;
-  --ok: #3f6b48;
+  //
+  // This value is deliberately ngx-gerber's own hardcoded canvas fill. The
+  // package exposes --ngx-gerber-canvas-bg on :host, but its renderer fills the
+  // canvas bitmap from a JS constant (#0d1117), and the bitmap covers the host
+  // at 100% x 100%. So the custom property only shows during load and resize.
+  // Matching it here means no seam in that gap. Once the package takes its
+  // background from the property, this can become a free choice again.
+  --canvas-bg: #0d1117;
+  --warn-bg: #fdf4e3;
+  --warn-border: #e0c68f;
+  --warn-text: #7a5410;
+  --ok: #2f6b4f;
 
   --measure-prose: 68ch;
   --measure-head: 24ch;
@@ -38,23 +67,30 @@
   --space-5: 5rem;
 }
 
+// Dark is a cool graphite with layered surfaces, not black with a bright accent.
+// Brass lightens so it keeps contrast on the dark ground instead of glowing.
 @media (prefers-color-scheme: dark) {
   :root {
-    --paper: #14110d;
-    --paper-raised: #1c1813;
-    --ink: #f0eae0;
-    --ink-muted: #a79b8a;
-    --ink-subtle: #8d8272;
-    --meta: #9c8e78;
-    --rule: #2e2820;
-    --rule-soft: #241f19;
-    --accent: #d9705e;
-    --brass: #c9a15b;
+    --bg: #0d1319;
+    --surface: #141d25;
+    --panel: #1a242e;
 
-    --canvas-bg: #0d0b08;
-    --warn-bg: #2a2114;
+    --ink: #e7edf3;
+    --ink-muted: #9aabb8;
+    --ink-subtle: #8b9baa;
+    --meta: #7d8d9b;
+
+    --border: #26313d;
+    --border-soft: #1d2731;
+
+    --accent: #d9a94f;
+    --brass-wash: #241d10;
+
+    // Same value as light: see the note above. The package's fill is fixed.
+    --canvas-bg: #0d1117;
+    --warn-bg: #241d10;
     --warn-border: #4a3a1e;
-    --warn-text: #d9b877;
-    --ok: #7fae87;
+    --warn-text: #d9a94f;
+    --ok: #6fae8c;
   }
 }
