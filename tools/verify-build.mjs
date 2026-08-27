@@ -141,6 +141,37 @@ const pagePaths = [
   ...projectSlugs.map((slug) => ['projects', slug, 'index.html']),
 ];
 
+// --- Nothing stray in the published assets.
+//
+// src/assets is copied into the build wholesale, so anything left there ships.
+// A backup of the CV was sitting next to it during a refresh and would have been
+// published at the next build. Backups and editor leftovers are private by
+// nature, so treat their presence as a failure rather than a warning.
+{
+  const assetsDir = join(BROWSER_DIR, 'assets');
+  const stray = [];
+  const walkAssets = async (dir, prefix = '') => {
+    let items = [];
+    try {
+      items = await readdir(dir, { withFileTypes: true });
+    } catch {
+      return;
+    }
+    for (const item of items) {
+      const rel = prefix ? `${prefix}/${item.name}` : item.name;
+      if (item.isDirectory()) {
+        await walkAssets(join(dir, item.name), rel);
+      } else if (/\.(bak|tmp|orig|rej|swp)\b|\.bak_|~$|^\._/i.test(item.name)) {
+        stray.push(rel);
+      }
+    }
+  };
+  await walkAssets(assetsDir);
+  if (stray.length) {
+    failures.push(`stray files would be published from src/assets: ${stray.join(', ')}`);
+  }
+}
+
 // --- No bare fragment links anywhere.
 //
 // index.html carries <base href="/">, so a relative href="#id" resolves against
@@ -257,5 +288,5 @@ if (failures.length) {
 }
 
 console.log(
-  `verify-build: 5 static routes, ${writingSlugs.length} posts, ${projectSlugs.length} projects, 404 fallback, feeds at root, ${referenced.size} referenced assets present, no em-dashes, ${headingsChecked} headings in order, no bare fragment links, Person structured data`,
+  `verify-build: 5 static routes, ${writingSlugs.length} posts, ${projectSlugs.length} projects, 404 fallback, feeds at root, ${referenced.size} referenced assets present, no em-dashes, ${headingsChecked} headings in order, no bare fragment links, no stray assets, Person structured data`,
 );

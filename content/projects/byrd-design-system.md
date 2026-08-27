@@ -12,7 +12,7 @@ metrics:
   - label: 'Consuming apps'
     value: '3'
   - label: 'Major Angular upgrades'
-    value: '5'
+    value: '4'
 ---
 
 byrd ran three separate frontend applications: a Customer dashboard, a Partner
@@ -42,7 +42,8 @@ instead of all breaking together.
 
 ## Keeping it upgradable
 
-Over that period the codebase went through five consecutive major Angular upgrades,
+Over that period the codebase went through four major Angular upgrades, v11, v14, v16
+and v17,
 including the typed-forms migration. That is not glamorous work and it is the reason
 the platform stayed buildable. A shared design system multiplies the cost of falling
 behind: every consuming application inherits your framework version, so a library
