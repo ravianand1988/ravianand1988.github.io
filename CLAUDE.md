@@ -87,14 +87,29 @@ Two build-time guardrails, both easy to trip:
 
 ## Verification
 
-`postbuild` runs three scripts in order: `tools/postbuild.mjs`, then `tools/verify-styles.mjs`, then
-[tools/verify-build.mjs](tools/verify-build.mjs). The last one checks the prerendered HTML: that
-every slug produced a page, that metadata and canonicals are present, that asset references are not
-relative, and that em-dashes have not crept into the copy. It also pins numbers quoted on the Gerber
-page to what the `ngx-gerber` package actually returns, so a dependency upgrade that changed the
-geometry fails the build instead of publishing a false claim.
+`postbuild` runs four scripts in order: `tools/postbuild.mjs`, then
+[verify-styles.mjs](tools/verify-styles.mjs), [verify-contrast.mjs](tools/verify-contrast.mjs) and
+[verify-build.mjs](tools/verify-build.mjs).
+
+- **verify-styles** asserts the token names and the three self-hosted font files are in the emitted
+  CSS, and that nothing requests a third-party font host.
+- **verify-contrast** reads the emitted CSS and walks every text token against every surface token
+  in both themes, failing below 4.5:1. It reads the shipped CSS rather than the SCSS so it checks
+  what actually went out.
+- **verify-build** checks the prerendered HTML: every slug produced a page, metadata and canonicals
+  are present, asset references are not relative, no em-dashes, exactly one h1 per page with no
+  skipped heading level, and the `Person` JSON-LD parses with every `sameAs` profile actually
+  linked on the page. It also pins numbers quoted on the Gerber page to what the `ngx-gerber`
+  package returns, so a dependency upgrade that changed the geometry fails the build instead of
+  publishing a false claim.
 
 If you add a claim backed by a number, prefer adding a check here over trusting the prose.
+
+[tools/build-og-image.mjs](tools/build-og-image.mjs) is **not** part of the build. It regenerates
+`src/assets/og-default.png`, which is committed; rerun it by hand when the wording or the palette
+changes. Two traps are documented in the file: opentype.js emits `NaN` into path data for glyphs at
+fractional x offsets, and it parses the `fvar` table without applying it, so outlines come out at
+the font's default weight.
 
 ## Deployment
 

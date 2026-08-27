@@ -1,6 +1,6 @@
 # Core & Consumers: design direction
 
-Status: proposed, awaiting review
+Status: implemented, phases 01 to 07 landed on 2026-08-27
 Date: 2026-08-27
 Branch: `feat/design-system-refresh-rk`
 Review artifact: https://claude.ai/code/artifact/5de8c25a-f60a-4e24-af84-02f0d59200cb
@@ -160,7 +160,8 @@ redesign and phase 01 should ship on its own.
 
 ## Roadmap
 
-Order matters, so it is numbered.
+Order matters, so it is numbered. All seven landed; see `git log` on
+`feat/design-system-refresh-rk` for one commit per phase.
 
 1. **Truth fixes.** byrd date on the homepage, the years claim, `CLAUDE.md` rewritten to match
    master. No design dependency; ships alone.
