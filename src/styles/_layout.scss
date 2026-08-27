@@ -14,8 +14,12 @@ $rail: 13rem;
 $main: 44rem;
 $track-breakpoint: 62rem; // ~992px, just under a 1024 viewport with its scrollbar
 
+// rail + the space-4 gutter + main. Header and footer use the same value, so
+// their rules line up with the content instead of overhanging it.
+$shell: 60rem;
+
 .track {
-  max-width: 74rem;
+  max-width: $shell;
   margin: 0 auto;
   padding: var(--space-5) var(--space-3);
   display: grid;
@@ -49,10 +53,10 @@ $track-breakpoint: 62rem; // ~992px, just under a 1024 viewport with its scrollb
   }
 }
 
-// Shared width for the header and footer so they line up with the grid above
-// rather than with the old 74ch column.
+// Shared width for the header and footer so they line up with the grid rather
+// than overhanging it.
 .shell-width {
-  max-width: 74rem;
+  max-width: $shell;
   margin: 0 auto;
   padding-inline: var(--space-3);
 }

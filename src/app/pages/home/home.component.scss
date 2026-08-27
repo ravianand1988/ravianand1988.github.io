@@ -5,6 +5,9 @@
 }
 
 .availability {
+  // The most important line on the page, so it gets the reading measure too.
+  // It was running to 98 characters against the wrapper's width.
+  max-width: var(--measure-prose);
   margin-top: var(--space-3);
   padding-left: var(--space-1);
   border-left: 2px solid var(--brass);
