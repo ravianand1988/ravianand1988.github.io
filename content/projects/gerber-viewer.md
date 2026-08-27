@@ -43,3 +43,23 @@ whole point of having ported the core to TypeScript in the first place.
 The parser's own test suite came across with it, including ten checks that run against
 that sample file on every build of this site. If the parser regresses, the site stops
 building.
+
+## Install it
+
+The parsing core, the renderer and the Angular components are published as
+[ngx-gerber](https://www.npmjs.com/package/ngx-gerber), MIT licensed, source at
+[github.com/ravianand1988/ngx-gerber](https://github.com/ravianand1988/ngx-gerber).
+
+```bash
+npm install ngx-gerber
+```
+
+The parser has no DOM and no framework dependency, so it runs in Node or a worker as
+well as the browser. The Angular layer on top is one component:
+
+```html
+<ngx-gerber-canvas [data]="data()" />
+```
+
+Describing work is weak evidence. Running it is better. Something you can install and
+read is better still.
