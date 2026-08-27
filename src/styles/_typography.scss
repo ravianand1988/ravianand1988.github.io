@@ -133,11 +133,16 @@ a {
   white-space: nowrap;
 }
 
+// Shortening the duration is not enough on its own: an animation with
+// iteration-count infinite would restart every 0.01ms and flicker, which is the
+// opposite of what the visitor asked for. Pinning the count to 1 makes it run
+// once, instantly, and stop.
 @media (prefers-reduced-motion: reduce) {
   *,
   *::before,
   *::after {
     animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
   }
 }

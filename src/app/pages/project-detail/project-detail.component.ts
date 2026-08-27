@@ -4,6 +4,8 @@ import { ContentService } from '../../core/content';
 import { PageRailComponent, RailGroup, RailSection } from '../../layout/page-rail/page-rail.component';
 import { Seo } from '../../core/seo';
 import { GerberDemoComponent } from '../../features/gerber-demo/gerber-demo.component';
+import { SystemGraphComponent } from '../../features/system-graph/system-graph.component';
+import { PROJECT_GRAPHS } from '../../features/system-graph/graphs';
 
 /**
  * Case studies are markdown, so an Angular component cannot live inside the
@@ -17,7 +19,7 @@ const MONTH_YEAR = new Intl.DateTimeFormat('en-GB', { month: 'short', year: 'num
 
 @Component({
   selector: 'app-project-detail',
-  imports: [GerberDemoComponent, PageRailComponent],
+  imports: [GerberDemoComponent, PageRailComponent, SystemGraphComponent],
   templateUrl: './project-detail.component.html',
 })
 export class ProjectDetailComponent {
@@ -40,6 +42,12 @@ export class ProjectDetailComponent {
   });
 
   readonly showDemo = computed(() => this.slug() === DEMO_SLUG);
+
+  /**
+   * Not every case study has a core-and-consumers shape. The ERP migration is a
+   * sequencing story, so it gets no graph rather than a forced one.
+   */
+  readonly graph = computed(() => PROJECT_GRAPHS[this.slug()] ?? null);
 
   readonly railGroups = computed<RailGroup[]>(() => {
     const entry = this.project();

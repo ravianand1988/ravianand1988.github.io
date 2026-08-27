@@ -4,6 +4,11 @@
 
     <main class="track-main">
       <h1>{{ entry.title }}</h1>
+
+      @if (graph(); as data) {
+        <app-system-graph class="architecture" [graph]="data" />
+      }
+
       <article class="prose" [innerHTML]="body()"></article>
 
       @if (showDemo()) {
