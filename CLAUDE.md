@@ -45,13 +45,19 @@ installed.
 - Directory boundaries:
   - `src/app/pages/` — one routed page each: home, projects-index, project-detail, writing-index,
     writing-post, ai, about, not-found.
-  - `src/app/layout/` — site-header, site-footer.
+  - `src/app/layout/` — site-header, site-footer, `page-rail` (the metadata rail; takes projected
+    content for page-specific controls) and `theme-toggle`.
   - `src/app/core/` — [content.ts](src/app/core/content.ts) (`ContentService`, reads the generated
-    module) and [seo.ts](src/app/core/seo.ts) (`Seo`, per-route title, description and canonical).
-    Every page calls `Seo.set(...)` in its constructor.
+    module), [seo.ts](src/app/core/seo.ts) (`Seo`, per-route title, description and canonical) and
+    [theme.ts](src/app/core/theme.ts) (`ThemeService`). Every page calls `Seo.set(...)` in its
+    constructor.
   - `src/app/features/gerber-demo/` — the live Gerber viewer. It **imports the published
     `ngx-gerber` package from npm**; it is not a vendored copy. That is deliberate: the case-study
     page is a consumer of the library like any other.
+  - `src/app/features/system-graph/` — the signature diagram. Geometry is computed, so it takes any
+    number of consumers. `graphs.ts` holds the per-slug data; a node carries a `version` only where
+    a real published one exists.
+  - `src/app/features/metric-list/` — the figures strip, fed from case-study frontmatter.
 
 ## Content pipeline
 
@@ -60,18 +66,36 @@ Markdown in [content/](content/) (`projects/`, `writing/`) is compiled at build 
 matter plus rendered HTML, Shiki-highlighted), `slugs.json`, an RSS feed and a sitemap.
 
 `src/generated/` is build output. **Never edit it by hand.** To change a case study or a post, edit
-the markdown. Front matter requires `title`, `description`, `date` and `pillar`; `assertEntry` in
-[tools/lib/content.mjs](tools/lib/content.mjs) fails the build if a field is missing.
+the markdown. Front matter requires `title`, `description`, `date` and `pillar`; case studies may
+also carry `stack` (a list of strings) and `metrics` (a list of `label` / `value` pairs). Both
+`assertEntry` and `assertOptionalMeta` in [tools/lib/content.mjs](tools/lib/content.mjs) fail the
+build on a missing or malformed field.
+
+The pipeline also rewrites the compiled HTML twice. `addHeadingIds` stamps ids on h2 and h3 so the
+rail's on-this-page list has anchors, and `markDecisions` turns a paragraph that opens with bold
+text ending in a full stop into a decision card. That second one keys off a convention the case
+studies already use, so the cards are the existing prose restyled rather than a second copy of it.
+Only `distribution-erp` uses it today.
 
 ## Styling
 
 [src/styles/](src/styles/) is the design system, entered via `index.scss`:
 
-- `_tokens.scss` — CSS custom properties on `:root` with a `@media (prefers-color-scheme: dark)`
-  override block.
+- `_tokens.scss` — CSS custom properties. The theme has **three** states, not two: no attribute
+  means follow the OS, `data-theme="dark"` and `data-theme="light"` override it. The dark values are
+  a SCSS mixin emitted twice, once inside `@media (prefers-color-scheme: dark)` guarded with
+  `:not([data-theme='light'])` and once under `:root[data-theme='dark']`. That guard is what lets an
+  explicit light choice beat a dark OS; without it the toggle looks broken in one direction only.
 - `_typography.scss` — self-hosted `@font-face` rules, element defaults, and shared utilities
-  (`.wrap`, `.eyebrow`, `.rule`, `.row`).
-- `_prose.scss` — typographic defaults for compiled markdown.
+  (`.eyebrow`, `.rule`, `.row`).
+- `_layout.scss` — the two-track grid (`.track`, `.track-rail`, `.track-main`), the `is-solo`
+  variant for pages with no rail, `.shell-width` for the header and footer, and the skip link.
+- `_prose.scss` — typographic defaults for compiled markdown, plus the decision-card styles and the
+  `--ngx-gerber-*` bridge that themes the embedded viewer.
+
+`--measure-prose` is a character count arrived at by measuring, not by taste. `ch` is the advance of
+"0", which in Geist is far wider than its average lowercase, so 68ch rendered 96 characters per
+line. Re-measure if the body face ever changes.
 
 Component SCSS handles only component-specific layout and should consume the `var(--…)` tokens
 rather than hard-coded colours, so both themes stay correct.
@@ -81,9 +105,10 @@ Two build-time guardrails, both easy to trip:
 - Component styles are budgeted at 2 kB (warning) / 4 kB (error) in
   [angular.json](angular.json). A bloated `*.component.scss` fails the production build.
 - [tools/verify-styles.mjs](tools/verify-styles.mjs) asserts that specific token names appear in the
-  emitted CSS (currently `--paper`, `--ink`, `--accent`, `--font-display`, `--font-mono`,
-  `--measure-prose`). **Renaming a token means updating that list in the same commit**, or the build
-  fails after the change looks fine locally.
+  emitted CSS (currently `--bg`, `--surface`, `--panel`, `--ink`, `--accent`, `--border`,
+  `--font-display`, `--font-mono`, `--measure-prose`) and names the three expected font files.
+  **Renaming a token or a font means updating those lists in the same commit**, or the build fails
+  after the change looks fine locally.
 
 ## Verification
 
