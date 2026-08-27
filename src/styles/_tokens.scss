@@ -64,6 +64,11 @@
   // lowercase, so 68ch rendered 96 characters per line and read like a wall.
   // 50ch measures at roughly 70, which is inside the comfortable range.
   // Re-measure if the body face ever changes: the mapping is per-font.
+  //
+  // ch is also relative to the element's own font size, so this token does not
+  // mean one fixed width. At --step--1 it resolves to 456px against body text's
+  // 561px. That is right for a caption and wrong for anything meant to match the
+  // body measure, which is how the availability line ended up wrapping early.
   --measure-prose: 50ch;
   --measure-head: 22ch;
   --space-1: 0.5rem;
