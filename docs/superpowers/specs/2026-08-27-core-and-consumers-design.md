@@ -26,8 +26,8 @@ It also conflicts with the brief in two measurable ways:
 All three case studies express one idea, and `gerber-viewer.md` names it outright: find the
 part that does not care about its consumer, and keep it that way.
 
-- federkleid: one design system, three dashboards, versioned so each upgrades on its own
-  schedule.
+- federkleid: one design system, four production applications, versioned so each upgrades on
+  its own schedule.
 - Gerber viewer: one parsing core, three front ends.
 - Distribution ERP: one set of business rules kept portable so they survived a rewrite.
 
@@ -179,9 +179,11 @@ Order matters, so it is numbered. All seven landed; see `git log` on
 ## Open questions
 
 1. The years framing: "12 years building software, 15 in the industry", or no number?
-2. byrd metrics beyond what the case study already states (three dashboards, five consecutive
-   major Angular upgrades, versioned releases with Storybook). Team size, release cadence and
-   number of consuming libraries would suit the rail if they can be stated.
+2. ~~byrd metrics beyond what the case study already states.~~ **Answered 2026-08-27** by the
+   rewritten master CV: four production applications, ~309k lines of TypeScript, 77 components
+   and 166 icons, eight co-versioned domain packages, four major Angular upgrades (v11, v14, v16,
+   v17), ~9,900 tests. The case study previously said five upgrades and three dashboards; both
+   were wrong and are corrected.
 3. Availability wording. Garden leave ends 2026-09-30. State "available from October 2026", or
    keep it vague?
 

@@ -45,7 +45,7 @@ interface Box {
  * One core, its consumers, and the version each one is on.
  *
  * The site's signature element, and it is the same shape three times over:
- * federkleid behind three dashboards, a parsing core behind three front ends,
+ * federkleid behind four applications, a parsing core behind three front ends,
  * a set of business rules kept portable so they survived a rewrite. Same
  * component, different data.
  *
