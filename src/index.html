@@ -22,6 +22,35 @@
       if (t === 'dark' || t === 'light') document.documentElement.setAttribute('data-theme', t);
     } catch (e) {}
   </script>
+  <!--
+    Site-wide identity, so search engines can tie the pages to one person rather
+    than guessing. Static here rather than injected by the Seo service: it is the
+    same on every route, and a script tag is awkward to manage through Angular's
+    Meta service. Every field is checkable. jobTitle and the sameAs profiles match
+    what /about and the footer already state, and there are no claims about
+    employers or skills here that the pages do not make themselves.
+  -->
+  <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "Person",
+      "name": "Ravi Anand Kumar",
+      "jobTitle": "Frontend Tech Lead",
+      "url": "https://ravianand1988.github.io/",
+      "image": "https://ravianand1988.github.io/assets/photo.jpg",
+      "address": {
+        "@type": "PostalAddress",
+        "addressLocality": "Berlin",
+        "addressCountry": "DE"
+      },
+      "knowsLanguage": ["en", "hi", "de"],
+      "sameAs": [
+        "https://www.linkedin.com/in/ravianandkumar/",
+        "https://github.com/ravianand1988",
+        "https://stackoverflow.com/users/2444505/ravi-anand"
+      ]
+    }
+  </script>
 </head>
 <body>
   <app-root></app-root>
