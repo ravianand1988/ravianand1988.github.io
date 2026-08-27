@@ -59,3 +59,51 @@
   text-transform: uppercase;
   color: var(--meta);
 }
+
+// The Gerber case study renders a live demo below its prose. The section needs
+// to break out of the prose measure, since the viewer wants the full column.
+.demo-section {
+  margin-top: var(--space-5);
+  padding-top: var(--space-3);
+  border-top: 1px solid var(--rule);
+
+  // ngx-gerber ships namespaced custom properties with its own fallbacks.
+  // Mapping this site's tokens onto them is the whole of the theming, and it
+  // means the embedded viewer follows the light and dark palettes for free.
+  // Set here rather than in the component so the component stays inside its
+  // 2 kB style budget; custom properties inherit either way.
+  --ngx-gerber-canvas-bg: var(--canvas-bg);
+  --ngx-gerber-paper: var(--paper);
+  --ngx-gerber-ink: var(--ink);
+  --ngx-gerber-ink-muted: var(--ink-muted);
+  --ngx-gerber-ink-subtle: var(--ink-subtle);
+  --ngx-gerber-meta: var(--meta);
+  --ngx-gerber-rule: var(--rule);
+  --ngx-gerber-rule-soft: var(--rule-soft);
+  --ngx-gerber-accent: var(--accent);
+  --ngx-gerber-warn-bg: var(--warn-bg);
+  --ngx-gerber-warn-border: var(--warn-border);
+  --ngx-gerber-warn-text: var(--warn-text);
+  --ngx-gerber-ok: var(--ok);
+  --ngx-gerber-font-mono: var(--font-mono);
+  --ngx-gerber-step--1: var(--step--1);
+  --ngx-gerber-space-1: var(--space-1);
+  --ngx-gerber-space-2: var(--space-2);
+}
+
+.demo-lead {
+  max-width: var(--measure-prose);
+  color: var(--ink-muted);
+  margin: 0 0 var(--space-3);
+}
+
+.demo-placeholder {
+  margin: 0;
+  padding: var(--space-4) 0;
+  color: var(--meta);
+  font-family: var(--font-mono);
+  font-size: 0.78rem;
+  text-align: center;
+  border: 1px dashed var(--rule);
+  border-radius: 6px;
+}

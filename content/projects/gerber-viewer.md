@@ -31,8 +31,39 @@ renderer.
 That is the same problem as a design system, in a different costume: find the part
 that does not care about its consumer, and keep it that way.
 
-## Where it goes next
+## The parser is running on this page
 
-An interactive version of this belongs on this site rather than being described on it.
-Drop in a Gerber file, watch the board render. That is a better argument than any
-paragraph I can write about parsers, and it is the next thing I am building here.
+Describing a parser is weak evidence. Below is the actual thing: the same parsing core
+and canvas renderer, running in your browser, with a real Altium-generated paste layer
+loaded by default. Drop in your own Gerber file and it will draw that instead.
+
+Nothing is uploaded. The file is read, parsed and rendered in the tab, which is the
+whole point of having ported the core to TypeScript in the first place.
+
+The parser's sixty tests live in the package, ten of them against this exact sample
+file. This site keeps a smaller integration check of its own, pinning the numbers
+quoted on this page to what the package actually returns. If a dependency upgrade
+changed the geometry, that check fails and the page stops claiming something untrue.
+
+## Install it
+
+The parsing core, the renderer and the Angular components are published as
+[ngx-gerber](https://www.npmjs.com/package/ngx-gerber), MIT licensed, source at
+[github.com/ravianand1988/ngx-gerber](https://github.com/ravianand1988/ngx-gerber).
+
+```bash
+npm install ngx-gerber
+```
+
+The parser has no DOM and no framework dependency, so it runs in Node or a worker as
+well as the browser. The Angular layer on top is one component:
+
+```html
+<ngx-gerber-canvas [data]="data()" />
+```
+
+The viewer above is not a copy of that package, it imports it. This page is a
+consumer like any other, which is the only honest way to demonstrate a library.
+
+Describing work is weak evidence. Running it is better. Something you can install and
+read is better still.

@@ -2,9 +2,19 @@ import { Component, computed, inject, input } from '@angular/core';
 import { DomSanitizer } from '@angular/platform-browser';
 import { ContentService } from '../../core/content';
 import { Seo } from '../../core/seo';
+import { GerberDemoComponent } from '../../features/gerber-demo/gerber-demo.component';
+
+/**
+ * Case studies are markdown, so an Angular component cannot live inside the
+ * rendered prose. The one case study that has a live demo names itself here and
+ * the demo renders below the article instead. Deliberately a single special case
+ * rather than a general embedding mechanism, because there is exactly one demo.
+ */
+const DEMO_SLUG = 'gerber-viewer';
 
 @Component({
   selector: 'app-project-detail',
+  imports: [GerberDemoComponent],
   templateUrl: './project-detail.component.html',
 })
 export class ProjectDetailComponent {
@@ -25,6 +35,8 @@ export class ProjectDetailComponent {
     }
     return found;
   });
+
+  readonly showDemo = computed(() => this.slug() === DEMO_SLUG);
 
   // Same rationale as WritingPostComponent: first-party markdown compiled at
   // build time, no user-input path, and the sanitizer would strip Shiki's

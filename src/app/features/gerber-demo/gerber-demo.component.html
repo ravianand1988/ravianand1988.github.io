@@ -1,0 +1,88 @@
+<div class="demo">
+  <div class="bar">
+    <div class="group">
+      <label class="btn">
+        Open a file
+        <input type="file" [accept]="accept" (change)="onFilePicked($event)" hidden />
+      </label>
+      <button type="button" class="btn" (click)="reloadSample()">Reload sample</button>
+    </div>
+
+    <span class="file" [title]="store.fileName() ?? ''">
+      @if (store.loading()) {
+        Loading
+      } @else {
+        {{ store.fileName() ?? 'No file loaded' }}
+      }
+    </span>
+
+    <div class="group">
+      <div class="segmented" role="group" aria-label="Display units">
+        <button
+          type="button"
+          [class.active]="store.displayUnit() === GerberUnit.Millimeters"
+          (click)="setUnit(GerberUnit.Millimeters)"
+        >
+          mm
+        </button>
+        <button
+          type="button"
+          [class.active]="store.displayUnit() === GerberUnit.Inches"
+          (click)="setUnit(GerberUnit.Inches)"
+        >
+          in
+        </button>
+      </div>
+
+      <button type="button" class="btn" (click)="zoomOut()" [disabled]="!store.hasData()" aria-label="Zoom out">
+        &minus;
+      </button>
+      <button type="button" class="btn" (click)="zoomIn()" [disabled]="!store.hasData()" aria-label="Zoom in">
+        +
+      </button>
+      <button type="button" class="btn" (click)="fit()" [disabled]="!store.hasData()">Fit</button>
+
+      <label class="toggle">
+        <input type="checkbox" [checked]="showBounds()" (change)="showBounds.set(!showBounds())" />
+        Bounds
+      </label>
+      <label class="toggle">
+        <input type="checkbox" [checked]="showOrigin()" (change)="showOrigin.set(!showOrigin())" />
+        Origin
+      </label>
+    </div>
+  </div>
+
+  @if (store.error(); as message) {
+    <p class="error" role="alert">Could not parse {{ store.fileName() }}: {{ message }}</p>
+  }
+
+  <div class="stage-row">
+    <section
+      class="stage"
+      [class.drag-over]="dragging()"
+      (dragover)="onDragOver($event)"
+      (dragleave)="onDragLeave($event)"
+      (drop)="onDrop($event)"
+    >
+      <ngx-gerber-canvas
+        [data]="store.data()"
+        [highlightApertureCode]="store.highlightApertureCode()"
+        [showBounds]="showBounds()"
+        [showOrigin]="showOrigin()"
+        (cursorMoved)="onCursorMoved($event)"
+      />
+    </section>
+
+    <ngx-gerber-info-panel class="panel" />
+  </div>
+
+  <p class="status">
+    <span class="mono">{{ cursorLabel() ?? '-' }}</span>
+    @if (cursorLabel()) {
+      <span class="dim">{{ unitSuffix() }}</span>
+    }
+    <span class="spacer"></span>
+    <span class="dim">Drag to pan, wheel to zoom, double-click to fit</span>
+  </p>
+</div>
