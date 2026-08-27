@@ -32,4 +32,31 @@ describe('AboutComponent', () => {
     const cv = (fixture.nativeElement as HTMLElement).querySelector('a[download]');
     expect(cv?.getAttribute('href')).toContain('Ravi_Anand_Kumar_CV');
   });
+
+  // The rail's ids are hand-written in the template rather than stamped by the
+  // content pipeline, so a heading rename would silently break every anchor.
+  it('points every rail link at a heading that exists on the page', () => {
+    const fixture = TestBed.createComponent(AboutComponent);
+    fixture.detectChanges();
+    const el = fixture.nativeElement as HTMLElement;
+
+    const headingIds = Array.from(el.querySelectorAll('h2[id]')).map((h) => h.id);
+    const railIds = fixture.componentInstance.railSections.map((s) => s.id);
+
+    expect(railIds.length).toBeGreaterThan(0);
+    for (const id of railIds) {
+      expect(headingIds).toContain(id);
+    }
+  });
+
+  it('lists every h2 in the rail, so nothing is unreachable from it', () => {
+    const fixture = TestBed.createComponent(AboutComponent);
+    fixture.detectChanges();
+    const el = fixture.nativeElement as HTMLElement;
+    const headingIds = Array.from(el.querySelectorAll('h2')).map((h) => h.id);
+    expect(headingIds.every((id) => !!id)).toBe(true);
+    expect(headingIds.sort()).toEqual(
+      fixture.componentInstance.railSections.map((s) => s.id).sort(),
+    );
+  });
 });

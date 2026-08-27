@@ -1,4 +1,7 @@
 <aside class="rail" aria-label="Page details">
+  <!-- Page-specific rail controls, e.g. the writing index's pillar filter. -->
+  <ng-content />
+
   <div class="groups">
     @for (group of groups(); track group.label) {
       <div class="group">

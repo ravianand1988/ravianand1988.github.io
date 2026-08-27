@@ -1,24 +1,30 @@
-<main class="wrap">
-  <p class="eyebrow">Writing</p>
-  <h1>Notes from inside the work.</h1>
-
-  <div class="filters">
-    @for (pillar of pillars; track pillar) {
-      <button type="button" [class.on]="active() === pillar" (click)="select(pillar)">
-        {{ pillar }}
-      </button>
-    }
-  </div>
-
-  <hr class="rule" />
-
-  @for (post of posts(); track post.slug) {
-    <div class="row">
-      <a class="row-title" [routerLink]="['/writing', post.slug]">{{ post.title }}</a>
-      <span class="row-desc">{{ post.description }}</span>
-      <span class="row-meta">{{ post.date | date: 'MMM y' }}</span>
+<div class="track">
+  <app-page-rail class="track-rail" [groups]="railGroups()">
+    <div class="filters" role="group" aria-label="Filter by pillar">
+      @for (pillar of pillars; track pillar) {
+        <button
+          type="button"
+          [class.on]="active() === pillar"
+          [attr.aria-pressed]="active() === pillar"
+          (click)="select(pillar)"
+        >
+          {{ pillar.replace('-', ' ') }}
+        </button>
+      }
     </div>
-  } @empty {
-    <p>Nothing published under that filter yet.</p>
-  }
-</main>
+  </app-page-rail>
+
+  <main class="track-main">
+    <h1>Notes from inside the work.</h1>
+
+    @for (post of posts(); track post.slug) {
+      <div class="row">
+        <a class="row-title" [routerLink]="['/writing', post.slug]">{{ post.title }}</a>
+        <span class="row-desc">{{ post.description }}</span>
+        <span class="row-meta">{{ post.date | date: 'MMM y' }}</span>
+      </div>
+    } @empty {
+      <p>Nothing published under that filter yet.</p>
+    }
+  </main>
+</div>

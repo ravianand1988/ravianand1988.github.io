@@ -37,6 +37,15 @@ $shell: 60rem;
   max-width: $main;
 }
 
+// Pages with no rail metadata worth showing. A rail holding a single derived
+// count would be a section that exists because the template has one, so those
+// pages drop the column instead of reserving an empty one.
+//
+// They keep the shell width and align left rather than centring, so the text
+// starts on the same vertical line as the header's name and as the rail on
+// every other page. Centring a narrower column made solo pages look nudged
+// right of everything around them.
+
 @media (min-width: $track-breakpoint) {
   .track {
     grid-template-columns: $rail minmax(0, $main);
@@ -50,6 +59,11 @@ $shell: 60rem;
   .track > .track-rail {
     position: sticky;
     top: var(--space-3);
+  }
+
+  .track.is-solo {
+    grid-template-columns: minmax(0, $main);
+    justify-content: start;
   }
 }
 

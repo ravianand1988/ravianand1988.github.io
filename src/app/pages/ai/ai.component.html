@@ -1,5 +1,7 @@
-<main class="wrap">
-  <p class="eyebrow">Building with AI</p>
+<div class="track">
+  <app-page-rail class="track-rail" [groups]="railGroups" [sections]="railSections" />
+
+  <main class="track-main">
   <h1>Tooling a team kept using.</h1>
 
   <div class="prose">
@@ -9,14 +11,14 @@
       inconsistently by hand.
     </p>
 
-    <h2>Why it worked</h2>
+    <h2 id="why-it-worked">Why it worked</h2>
     <p>
       Because each skill encodes a decision the team had already made and kept re-litigating. The
       value was never the model. It was writing down how we work, in a form the tooling could apply
       consistently.
     </p>
 
-    <h2>The public version</h2>
+    <h2 id="the-public-version">The public version</h2>
     <p>
       I have rewritten it clean-room, with nothing employer-specific in it, and one significant
       design change. The original hard-coded my team's conventions: our branch format, our PR
@@ -32,7 +34,7 @@
       to ask again.
     </p>
 
-    <h2>The six skills</h2>
+    <h2 id="the-six-skills">The six skills</h2>
     <ul>
       <li>
         <strong>project-conventions.</strong> Works out how this repository does things. Every other
@@ -75,3 +77,4 @@
     </p>
   </div>
 </main>
+</div>

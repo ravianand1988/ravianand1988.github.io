@@ -28,6 +28,10 @@ export interface RailSection {
   styleUrl: './page-rail.component.scss',
 })
 export class PageRailComponent {
+  /**
+   * Controls belong in the rail rather than above the list they filter, so
+   * project them in. Everything else the rail shows is data.
+   */
   readonly groups = input<RailGroup[]>([]);
   readonly sections = input<RailSection[]>([]);
 }

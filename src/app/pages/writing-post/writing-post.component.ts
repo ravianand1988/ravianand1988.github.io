@@ -1,12 +1,14 @@
 import { Component, computed, inject, input } from '@angular/core';
-import { DatePipe } from '@angular/common';
 import { DomSanitizer } from '@angular/platform-browser';
 import { ContentService } from '../../core/content';
+import { PageRailComponent, RailGroup, RailSection } from '../../layout/page-rail/page-rail.component';
 import { Seo } from '../../core/seo';
+
+const MONTH_YEAR = new Intl.DateTimeFormat('en-GB', { month: 'short', year: 'numeric' });
 
 @Component({
   selector: 'app-writing-post',
-  imports: [DatePipe],
+  imports: [PageRailComponent],
   templateUrl: './writing-post.component.html',
 })
 export class WritingPostComponent {
@@ -27,6 +29,22 @@ export class WritingPostComponent {
     }
     return found;
   });
+
+  readonly railGroups = computed<RailGroup[]>(() => {
+    const entry = this.post();
+    if (!entry) return [];
+    return [
+      { label: 'Pillar', values: [entry.pillar.replace(/-/g, ' ')] },
+      { label: 'Published', values: [MONTH_YEAR.format(new Date(entry.date))] },
+    ];
+  });
+
+  readonly railSections = computed<RailSection[]>(
+    () =>
+      this.post()
+        ?.headings.filter((heading) => heading.level === 2)
+        .map(({ id, text }) => ({ id, text })) ?? [],
+  );
 
   // The body is first-party markdown compiled at build time. There is no
   // user-input path into it. Angular's sanitizer strips the inline styles
