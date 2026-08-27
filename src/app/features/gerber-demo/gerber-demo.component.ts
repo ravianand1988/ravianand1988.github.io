@@ -7,25 +7,35 @@ import {
   signal,
   viewChild,
 } from '@angular/core';
-import { convertLength, formatNumber, GerberUnit, unitSuffix } from './core';
-import { GerberStore } from './gerber-store';
-import { CursorPosition, GerberCanvas } from './viewer/gerber-canvas';
-import { InfoPanel } from './viewer/info-panel';
+import {
+  convertLength,
+  CursorPosition,
+  formatNumber,
+  GerberCanvas,
+  GerberInfoPanel,
+  GerberStore,
+  GerberUnit,
+  unitSuffix,
+} from 'ngx-gerber';
+
+/** The Altium paste layer shipped in this site's assets. */
+const SAMPLE_URL = '/assets/samples/PCB1.GBP';
 
 /** Extensions the file picker suggests; any text file is accepted regardless. */
 const GERBER_EXTENSIONS =
   '.gbr,.gbl,.gbo,.gbp,.gbs,.gtl,.gto,.gtp,.gts,.gm1,.gko,.g1,.g2,.g3,.ger,.art,.pho,.txt';
 
 /**
- * The viewer embedded in the Gerber case study. Same store, parser and renderer as
- * the standalone app it was ported from; the shell is trimmed to sit inside a page
- * rather than own the window, and it loads the bundled sample on first render so a
- * visitor sees a board without having to find a Gerber file first.
+ * The viewer embedded in the Gerber case study. The parser, renderer and canvas
+ * come from the published ngx-gerber package, so this page consumes the same
+ * thing a reader can install rather than a copy of it. What is left here is the
+ * page-level shell: a toolbar, and loading the bundled sample on first render so
+ * a visitor sees a board without having to find a Gerber file first.
  */
 @Component({
   selector: 'app-gerber-demo',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [GerberCanvas, InfoPanel],
+  imports: [GerberCanvas, GerberInfoPanel],
   templateUrl: './gerber-demo.component.html',
   styleUrl: './gerber-demo.component.scss',
 })
@@ -60,8 +70,12 @@ export class GerberDemoComponent {
     // Browser only. The page is prerendered at build time, where there is no
     // canvas to draw on and no server to fetch the sample from.
     afterNextRender(() => {
-      if (!this.store.hasData()) void this.store.loadSample();
+      if (!this.store.hasData()) void this.store.loadSample(SAMPLE_URL);
     });
+  }
+
+  protected reloadSample(): void {
+    void this.store.loadSample(SAMPLE_URL);
   }
 
   protected async onFilePicked(event: Event): Promise<void> {

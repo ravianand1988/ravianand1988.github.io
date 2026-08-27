@@ -5,7 +5,7 @@
         Open a file
         <input type="file" [accept]="accept" (change)="onFilePicked($event)" hidden />
       </label>
-      <button type="button" class="btn" (click)="store.loadSample()">Reload sample</button>
+      <button type="button" class="btn" (click)="reloadSample()">Reload sample</button>
     </div>
 
     <span class="file" [title]="store.fileName() ?? ''">
@@ -65,7 +65,7 @@
       (dragleave)="onDragLeave($event)"
       (drop)="onDrop($event)"
     >
-      <app-gerber-canvas
+      <ngx-gerber-canvas
         [data]="store.data()"
         [highlightApertureCode]="store.highlightApertureCode()"
         [showBounds]="showBounds()"
@@ -74,7 +74,7 @@
       />
     </section>
 
-    <app-info-panel class="panel" />
+    <ngx-gerber-info-panel class="panel" />
   </div>
 
   <p class="status">

@@ -40,9 +40,10 @@ loaded by default. Drop in your own Gerber file and it will draw that instead.
 Nothing is uploaded. The file is read, parsed and rendered in the tab, which is the
 whole point of having ported the core to TypeScript in the first place.
 
-The parser's own test suite came across with it, including ten checks that run against
-that sample file on every build of this site. If the parser regresses, the site stops
-building.
+The parser's sixty tests live in the package, ten of them against this exact sample
+file. This site keeps a smaller integration check of its own, pinning the numbers
+quoted on this page to what the package actually returns. If a dependency upgrade
+changed the geometry, that check fails and the page stops claiming something untrue.
 
 ## Install it
 
@@ -60,6 +61,9 @@ well as the browser. The Angular layer on top is one component:
 ```html
 <ngx-gerber-canvas [data]="data()" />
 ```
+
+The viewer above is not a copy of that package, it imports it. This page is a
+consumer like any other, which is the only honest way to demonstrate a library.
 
 Describing work is weak evidence. Running it is better. Something you can install and
 read is better still.
