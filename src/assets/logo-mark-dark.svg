@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64" role="img" aria-label="Ravi Anand Kumar">
+  <rect x="1.5" y="1.5" width="61" height="61" fill="none" stroke="#f0eae0" stroke-width="3"></rect>
+  <text x="32" y="27" text-anchor="middle" dominant-baseline="central" font-family="'Geist Mono', ui-monospace, monospace" font-size="26">
+    <tspan fill="#d9705e">[</tspan><tspan fill="#f0eae0" font-weight="500">R</tspan><tspan fill="#d9705e">]</tspan>
+  </text>
+  <g fill="#f0eae0">
+    <rect x="19.4" y="41" width="1.2" height="7"></rect>
+    <rect x="22.4" y="41" width="1.2" height="7"></rect>
+    <rect x="25.4" y="41" width="1.2" height="7"></rect>
+    <rect x="28.4" y="41" width="1.2" height="7"></rect>
+    <rect x="31.4" y="41" width="1.2" height="7"></rect>
+    <rect x="34.4" y="41" width="1.2" height="7"></rect>
+    <rect x="37.4" y="41" width="1.2" height="7"></rect>
+    <rect x="40.4" y="41" width="1.2" height="7"></rect>
+    <rect x="43.4" y="41" width="1.2" height="7"></rect>
+  </g>
+</svg>

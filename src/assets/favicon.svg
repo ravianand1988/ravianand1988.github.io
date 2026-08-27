@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" width="16" height="16" role="img" aria-label="R">
+  <rect width="16" height="16" fill="#faf7f2"></rect>
+  <rect x="0.5" y="0.5" width="15" height="15" fill="none" stroke="#17130e"></rect>
+  <text x="8" y="6.6" text-anchor="middle" dominant-baseline="central" font-family="'Geist Mono', ui-monospace, monospace" font-weight="500" font-size="9" fill="#17130e">R</text>
+  <g fill="#7c2a20">
+    <rect x="5" y="11" width="1" height="2.5"></rect>
+    <rect x="7" y="11" width="1" height="2.5"></rect>
+    <rect x="9" y="11" width="1" height="2.5"></rect>
+  </g>
+  
+</svg>
