@@ -1,26 +1,30 @@
-<main class="wrap">
-  <p class="eyebrow">About</p>
+<div class="track">
+  <app-page-rail class="track-rail" [groups]="railGroups" [sections]="railSections" />
+
+  <main class="track-main">
   <h1>Twelve years in software, the last six making frontends behave.</h1>
 
   <div class="prose">
     <p>
-      I am a Frontend Tech Lead in Berlin. Angular, TypeScript, RxJS and NgRx day to day, on top of
-      earlier full-stack work in C# and .NET, Python and Django, Vue, and Java and Kotlin. I care
-      about component-driven architecture and design systems as much as I care about hiring, code
-      review and CI/CD, because in my experience the second list is what decides whether the first
-      one survives contact with a real team.
+      I am a Frontend Tech Lead in Berlin. Angular, TypeScript, RxJS and NgRx day to day, and I
+      still ship backend: Python services at byrd through 2026, a Java to Kotlin migration, and
+      earlier full-stack work in C# and .NET, Django and Vue. I care about component-driven
+      architecture and design systems as much as I care about hiring, code review and CI/CD,
+      because in my experience the second list is what decides whether the first one survives
+      contact with a real team.
     </p>
 
-    <h2>byrd technologies, Berlin</h2>
+    <h2 id="byrd">byrd technologies, Berlin</h2>
     <p class="role-meta">Frontend Tech Lead, previously Senior Frontend Engineer and Frontend Developer. Oct 2019 to Present.</p>
     <ul class="role-byrd">
       <li>
         Promoted to Frontend Tech Lead in Aug 2024, leading frontend architecture for a B2B
-        logistics platform across Partner, Customer and Admin dashboards.
+        logistics platform: 12 fulfillment centers, four production frontends, roughly 309,000
+        lines of TypeScript.
       </li>
       <li>
-        Owned and published federkleid, the shared Angular design system, plus eight internal
-        Angular libraries consumed by all three dashboards, on a regular versioned release cadence.
+        Top contributor to federkleid, the shared Angular design system, 77 components and 166
+        icons, plus the eight co-versioned domain packages all four applications consume.
       </li>
       <li>
         Moved domain state out of per-app code into shared versioned packages, flag-gated, one
@@ -35,9 +39,14 @@
         Kept roughly 9,900 Karma and Jasmine unit and component tests green across the frontend
         estate, behind a custom CI gate that fails any build containing a skipped spec.
       </li>
+      <li>
+        Shipped 18 merged changes into byrd's Python warehouse service from 2022 to 2026, Flask
+        with SQLAlchemy and Marshmallow, more than half the diff in tests, and led the migration
+        of the Android warehouse app from Java to Kotlin.
+      </li>
     </ul>
 
-    <h2>Assistr Digital Health Systems, Berlin</h2>
+    <h2 id="assistr">Assistr Digital Health Systems, Berlin</h2>
     <p class="role-meta">Software Developer. Oct 2017 to Sep 2019.</p>
     <p>
       Joined a healthcare platform for elderly and assisted living at inception and owned delivery
@@ -45,7 +54,7 @@
       PostgreSQL, and the Vue frontend built test-first with Jest.
     </p>
 
-    <h2>AppFlow Solutions, Faridabad</h2>
+    <h2 id="appflow">AppFlow Solutions, Faridabad</h2>
     <p class="role-meta">Software Engineer. Aug 2015 to Sep 2017.</p>
     <p>
       Built an intranet data-input application for a US hospitality client in C# on ASP.NET MVC,
@@ -53,7 +62,7 @@
       on Azure Logic Apps and Functions.
     </p>
 
-    <h2>INF India, Faridabad</h2>
+    <h2 id="inf-india">INF India, Faridabad</h2>
     <p class="role-meta">Software Engineer, starting as an intern. Dec 2013 to Sep 2015.</p>
     <p>
       Built a loyalty card management system end to end: the REST API and the web frontend in C# on
@@ -62,7 +71,7 @@
       like.
     </p>
 
-    <h2>Before that, teaching</h2>
+    <h2 id="teaching">Before that, teaching</h2>
     <p class="role-meta">.NET Trainer at NIIT, Mar 2011 to Dec 2012. IT Trainer at IIHT, Jan 2013 to Dec 2013.</p>
     <p>
       Nearly three years teaching C#, .NET, ASP.NET, C, C++ and SQL to students and working
@@ -71,7 +80,7 @@
       technical leadership is.
     </p>
 
-    <h2>Practicalities</h2>
+    <h2 id="practicalities">Practicalities</h2>
     <p>
       Based in Berlin. Hindi native, English fluent, German at B1. I hold permanent residence, so
       there is no visa sponsorship to arrange.
@@ -82,3 +91,4 @@
     </p>
   </div>
 </main>
+</div>

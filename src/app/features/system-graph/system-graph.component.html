@@ -1,0 +1,67 @@
+<figure class="graph">
+  <div class="scroller">
+    <svg
+      class="canvas"
+      [attr.viewBox]="viewBox()"
+      role="img"
+      [attr.aria-label]="description()"
+      preserveAspectRatio="xMidYMid meet"
+    >
+      @for (trace of traces(); track $index) {
+        <path class="trace" [attr.d]="trace" />
+      }
+      @for (trace of traces(); track $index) {
+        <path class="pulse" [attr.d]="trace" [style.animationDelay]="delayFor($index)" />
+      }
+      @for (pad of pads(); track $index) {
+        <circle class="pad" [attr.cx]="pad.x" [attr.cy]="pad.y" r="2.6" />
+      }
+
+      @let core = coreBox();
+      <rect
+        class="box box-core"
+        [attr.x]="core.x"
+        [attr.y]="core.y"
+        [attr.width]="core.w"
+        [attr.height]="core.h"
+        rx="3"
+      />
+      <text class="name" [attr.x]="core.x + 18" [attr.y]="core.y + 28">{{ core.node.name }}</text>
+      @if (core.node.detail) {
+        <text class="detail" [attr.x]="core.x + 18" [attr.y]="core.y + 48">
+          {{ core.node.detail }}
+        </text>
+      }
+      @if (core.node.version) {
+        <text class="version" [attr.x]="core.x + 18" [attr.y]="core.y + 65">
+          publishes {{ core.node.version }}
+        </text>
+      }
+
+      @for (box of consumerBoxes(); track box.node.name) {
+        <rect
+          class="box"
+          [attr.x]="box.x"
+          [attr.y]="box.y"
+          [attr.width]="box.w"
+          [attr.height]="box.h"
+          rx="3"
+        />
+        <text class="name" [attr.x]="box.x + 16" [attr.y]="box.y + 25">{{ box.node.name }}</text>
+        @if (box.node.version) {
+          <text class="version" [attr.x]="box.x + 16" [attr.y]="box.y + 44">
+            on {{ box.node.version }}
+          </text>
+        } @else if (box.node.detail) {
+          <text class="detail" [attr.x]="box.x + 16" [attr.y]="box.y + 44">
+            {{ box.node.detail }}
+          </text>
+        }
+      }
+    </svg>
+  </div>
+
+  @if (graph().caption) {
+    <figcaption>{{ graph().caption }}</figcaption>
+  }
+</figure>

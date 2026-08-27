@@ -1,8 +1,12 @@
 import { Component, computed, inject, input } from '@angular/core';
 import { DomSanitizer } from '@angular/platform-browser';
 import { ContentService } from '../../core/content';
+import { PageRailComponent, RailGroup, RailSection } from '../../layout/page-rail/page-rail.component';
 import { Seo } from '../../core/seo';
 import { GerberDemoComponent } from '../../features/gerber-demo/gerber-demo.component';
+import { SystemGraphComponent } from '../../features/system-graph/system-graph.component';
+import { PROJECT_GRAPHS } from '../../features/system-graph/graphs';
+import { MetricListComponent } from '../../features/metric-list/metric-list.component';
 
 /**
  * Case studies are markdown, so an Angular component cannot live inside the
@@ -12,9 +16,11 @@ import { GerberDemoComponent } from '../../features/gerber-demo/gerber-demo.comp
  */
 const DEMO_SLUG = 'gerber-viewer';
 
+const MONTH_YEAR = new Intl.DateTimeFormat('en-GB', { month: 'short', year: 'numeric' });
+
 @Component({
   selector: 'app-project-detail',
-  imports: [GerberDemoComponent],
+  imports: [GerberDemoComponent, PageRailComponent, SystemGraphComponent, MetricListComponent],
   templateUrl: './project-detail.component.html',
 })
 export class ProjectDetailComponent {
@@ -37,6 +43,34 @@ export class ProjectDetailComponent {
   });
 
   readonly showDemo = computed(() => this.slug() === DEMO_SLUG);
+
+  /**
+   * Not every case study has a core-and-consumers shape. The ERP migration is a
+   * sequencing story, so it gets no graph rather than a forced one.
+   */
+  readonly graph = computed(() => PROJECT_GRAPHS[this.slug()] ?? null);
+
+  readonly railGroups = computed<RailGroup[]>(() => {
+    const entry = this.project();
+    if (!entry) return [];
+    const groups: RailGroup[] = [
+      { label: 'Pillar', values: [entry.pillar.replace(/-/g, ' ')] },
+      { label: 'Written', values: [MONTH_YEAR.format(new Date(entry.date))] },
+    ];
+    // Figures go in the main column as a MetricList, not here, so the rail
+    // classifies and navigates while the numbers stay where they are read.
+    if (entry.stack.length) groups.push({ label: 'Stack', values: entry.stack });
+    return groups;
+  });
+
+  // Level 2 only. The case studies are almost entirely h2, and mixing in the
+  // occasional h3 would make the list look nested without earning it.
+  readonly railSections = computed<RailSection[]>(
+    () =>
+      this.project()
+        ?.headings.filter((heading) => heading.level === 2)
+        .map(({ id, text }) => ({ id, text })) ?? [],
+  );
 
   // Same rationale as WritingPostComponent: first-party markdown compiled at
   // build time, no user-input path, and the sanitizer would strip Shiki's

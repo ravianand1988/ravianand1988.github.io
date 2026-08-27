@@ -1,8 +1,7 @@
+// Width comes from .shell-width, same as the header.
 .site-footer {
-  max-width: 74ch;
-  margin: 0 auto;
-  padding: var(--space-4) var(--space-3);
-  border-top: 1px solid var(--rule);
+  padding-block: var(--space-4);
+  border-top: 1px solid var(--border);
 }
 
 .links {

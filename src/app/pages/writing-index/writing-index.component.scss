@@ -11,14 +11,14 @@
   letter-spacing: 0.04em;
   color: var(--ink-subtle);
   background: transparent;
-  border: 1px solid var(--rule);
+  border: 1px solid var(--border);
   border-radius: 999px;
   padding: 0.2rem 0.6rem;
   cursor: pointer;
 }
 
 .filters button.on {
-  color: var(--paper);
+  color: var(--bg);
   background: var(--accent);
   border-color: var(--accent);
 }

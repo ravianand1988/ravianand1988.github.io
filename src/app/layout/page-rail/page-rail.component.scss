@@ -1,0 +1,83 @@
+.rail {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  line-height: 1.5;
+}
+
+.groups {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.group-label {
+  margin: 0 0 0.2rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--meta);
+}
+
+.group-value {
+  margin: 0;
+  color: var(--ink-muted);
+  font-variant-numeric: tabular-nums;
+}
+
+.contents {
+  padding-top: var(--space-2);
+  border-top: 1px solid var(--border-soft);
+}
+
+.contents ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+.contents a {
+  color: var(--ink-subtle);
+  text-decoration: none;
+}
+
+.contents a:hover {
+  color: var(--accent);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+// Below the layout breakpoint the rail is a row of chips under the title, not a
+// narrower column above the article.
+@media (max-width: 61.9375rem) {
+  .rail {
+    gap: var(--space-2);
+  }
+
+  .groups {
+    flex-direction: row;
+    gap: var(--space-3);
+    overflow-x: auto;
+    padding-bottom: 0.35rem;
+    // Keeps the row from being clipped mid-label when it scrolls.
+    scroll-snap-type: x proximity;
+  }
+
+  .group {
+    flex: 0 0 auto;
+    scroll-snap-align: start;
+  }
+
+  // Hidden rather than turned into a disclosure widget. Forcing a details
+  // element back open at wider viewports means overriding the UA rule that
+  // hides its children, which is not reliable across browsers. On one narrow
+  // column the list is also at its least useful and its most expensive: it
+  // would sit between the reader and the first paragraph.
+  .contents {
+    display: none;
+  }
+}

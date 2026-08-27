@@ -1,38 +1,49 @@
 @if (project(); as entry) {
-  <main class="wrap">
-    <p class="eyebrow">{{ entry.pillar }}</p>
-    <h1>{{ entry.title }}</h1>
-    <hr class="rule" />
-    <article class="prose" [innerHTML]="body()"></article>
+  <div class="track">
+    <app-page-rail class="track-rail" [groups]="railGroups()" [sections]="railSections()" />
 
-    @if (showDemo()) {
-      <section class="demo-section">
-        <p class="eyebrow">Try it</p>
-        <h2>The viewer, running here</h2>
-        <p class="demo-lead">
-          The sample below is a real Altium-generated paste layer. Drop in your own Gerber file to
-          replace it. Everything happens in this tab: the file is parsed and drawn in the browser,
-          nothing is uploaded.
-        </p>
+    <main class="track-main">
+      <h1>{{ entry.title }}</h1>
 
-        <!--
-          Two triggers on purpose. Viewport loads it the moment it scrolls into
-          view; idle guarantees it loads anyway, so a visitor never gets stuck
-          looking at the placeholder if the intersection observer never fires.
-          It stays a separate lazy chunk either way.
-        -->
-        @defer (on viewport; on idle) {
-          <app-gerber-demo />
-        } @placeholder {
-          <p class="demo-placeholder">Loading the viewer.</p>
-        }
-      </section>
-    }
-  </main>
+      <app-metric-list [metrics]="entry.metrics" />
+
+      @if (graph(); as data) {
+        <app-system-graph class="architecture" [graph]="data" />
+      }
+
+      <article class="prose" [innerHTML]="body()"></article>
+
+      @if (showDemo()) {
+        <section class="demo-section">
+          <p class="eyebrow">Try it</p>
+          <h2>The viewer, running here</h2>
+          <p class="demo-lead">
+            The sample below is a real Altium-generated paste layer. Drop in your own Gerber file to
+            replace it. Everything happens in this tab: the file is parsed and drawn in the browser,
+            nothing is uploaded.
+          </p>
+
+          <!--
+            Two triggers on purpose. Viewport loads it the moment it scrolls into
+            view; idle guarantees it loads anyway, so a visitor never gets stuck
+            looking at the placeholder if the intersection observer never fires.
+            It stays a separate lazy chunk either way.
+          -->
+          @defer (on viewport; on idle) {
+            <app-gerber-demo />
+          } @placeholder {
+            <p class="demo-placeholder">Loading the viewer.</p>
+          }
+        </section>
+      }
+    </main>
+  </div>
 } @else {
-  <main class="wrap">
-    <p class="eyebrow">404</p>
-    <h1>That project is not here.</h1>
-    <p><a href="/projects">See selected work</a></p>
-  </main>
+  <div class="track is-solo">
+    <main class="track-main">
+      <p class="eyebrow">404</p>
+      <h1>That project is not here.</h1>
+      <p><a href="/projects">See selected work</a></p>
+    </main>
+  </div>
 }

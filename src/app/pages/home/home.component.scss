@@ -1,8 +1,3 @@
-h1 em {
-  font-style: italic;
-  color: var(--accent);
-}
-
 .support {
   max-width: 52ch;
   color: var(--ink-muted);
@@ -10,6 +5,16 @@ h1 em {
 }
 
 .availability {
+  // No prose measure here, deliberately. --measure-prose is 50ch, and ch is
+  // relative to the element's own font size, so at this smaller size it
+  // resolved to 456px against the body text's 561px. The line fits the track in
+  // one at 605px, and the cap was breaking it after "Berlin, or", leaving a
+  // conjunction dangling.
+  //
+  // pretty rather than balance: when it does wrap on a narrow viewport this
+  // avoids the orphan without evening out the lines, which reads better for one
+  // short statement than for a paragraph. Firefox ignores it and wraps normally.
+  text-wrap: pretty;
   margin-top: var(--space-3);
   padding-left: var(--space-1);
   border-left: 2px solid var(--brass);
@@ -62,7 +67,7 @@ section p {
   flex: none;
   width: 132px;
   height: 132px;
-  border: 1px solid var(--rule);
+  border: 1px solid var(--border);
   object-fit: cover;
 }
 
@@ -76,4 +81,9 @@ section p {
     width: 108px;
     height: 108px;
   }
+}
+
+.hero-graph {
+  display: block;
+  margin-top: var(--space-4);
 }

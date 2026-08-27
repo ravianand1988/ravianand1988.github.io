@@ -31,7 +31,7 @@
   font-size: 0.86rem;
   line-height: 1.55;
   padding: var(--space-2);
-  border: 1px solid var(--rule);
+  border: 1px solid var(--border);
   border-radius: 6px;
   overflow-x: auto;
 }
@@ -48,7 +48,7 @@
 .prose td {
   text-align: left;
   padding: 0.5rem 0.75rem;
-  border-bottom: 1px solid var(--rule-soft);
+  border-bottom: 1px solid var(--border-soft);
 }
 
 .prose th {
@@ -65,7 +65,7 @@
 .demo-section {
   margin-top: var(--space-5);
   padding-top: var(--space-3);
-  border-top: 1px solid var(--rule);
+  border-top: 1px solid var(--border);
 
   // ngx-gerber ships namespaced custom properties with its own fallbacks.
   // Mapping this site's tokens onto them is the whole of the theming, and it
@@ -73,13 +73,13 @@
   // Set here rather than in the component so the component stays inside its
   // 2 kB style budget; custom properties inherit either way.
   --ngx-gerber-canvas-bg: var(--canvas-bg);
-  --ngx-gerber-paper: var(--paper);
+  --ngx-gerber-paper: var(--bg);
   --ngx-gerber-ink: var(--ink);
   --ngx-gerber-ink-muted: var(--ink-muted);
   --ngx-gerber-ink-subtle: var(--ink-subtle);
   --ngx-gerber-meta: var(--meta);
-  --ngx-gerber-rule: var(--rule);
-  --ngx-gerber-rule-soft: var(--rule-soft);
+  --ngx-gerber-rule: var(--border);
+  --ngx-gerber-rule-soft: var(--border-soft);
   --ngx-gerber-accent: var(--accent);
   --ngx-gerber-warn-bg: var(--warn-bg);
   --ngx-gerber-warn-border: var(--warn-border);
@@ -104,6 +104,33 @@
   font-family: var(--font-mono);
   font-size: 0.78rem;
   text-align: center;
-  border: 1px dashed var(--rule);
+  border: 1px dashed var(--border);
   border-radius: 6px;
+}
+
+// A named decision lifted out of the prose by tools/lib/content.mjs, from the
+// bold-lead convention the case studies already use. Not an Angular component:
+// the content is compiled markdown, so this is a treatment of generated markup
+// rather than something a template can instantiate.
+.prose .decision {
+  margin: var(--space-3) 0;
+  padding: var(--space-2) var(--space-3);
+  border: 1px solid var(--border);
+  border-left: 2px solid var(--accent);
+  border-radius: 3px;
+  background: var(--surface);
+}
+
+.prose .decision-title {
+  margin: 0 0 0.35rem;
+  font-family: var(--font-display);
+  font-size: var(--step-1);
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  color: var(--ink);
+}
+
+.prose .decision-body {
+  margin: 0;
+  color: var(--ink-muted);
 }

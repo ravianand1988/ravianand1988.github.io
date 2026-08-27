@@ -131,6 +131,156 @@ for (const dir of ['content', 'src']) {
   }
 }
 
+const pagePaths = [
+  ['index.html'],
+  ['writing', 'index.html'],
+  ['projects', 'index.html'],
+  ['ai', 'index.html'],
+  ['about', 'index.html'],
+  ...writingSlugs.map((slug) => ['writing', slug, 'index.html']),
+  ...projectSlugs.map((slug) => ['projects', slug, 'index.html']),
+];
+
+// --- Nothing stray in the published assets.
+//
+// src/assets is copied into the build wholesale, so anything left there ships.
+// A backup of the CV was sitting next to it during a refresh and would have been
+// published at the next build. Backups and editor leftovers are private by
+// nature, so treat their presence as a failure rather than a warning.
+{
+  const assetsDir = join(BROWSER_DIR, 'assets');
+  const stray = [];
+  const walkAssets = async (dir, prefix = '') => {
+    let items = [];
+    try {
+      items = await readdir(dir, { withFileTypes: true });
+    } catch {
+      return;
+    }
+    for (const item of items) {
+      const rel = prefix ? `${prefix}/${item.name}` : item.name;
+      if (item.isDirectory()) {
+        await walkAssets(join(dir, item.name), rel);
+      } else if (/\.(bak|tmp|orig|rej|swp)\b|\.bak_|~$|^\._/i.test(item.name)) {
+        stray.push(rel);
+      }
+    }
+  };
+  await walkAssets(assetsDir);
+  if (stray.length) {
+    failures.push(`stray files would be published from src/assets: ${stray.join(', ')}`);
+  }
+}
+
+// --- No bare fragment links anywhere.
+//
+// index.html carries <base href="/">, so a relative href="#id" resolves against
+// the site root rather than the current document: every rail link and the skip
+// link navigated to the homepage from any route but "/". Caught in review, not
+// by the earlier check, which only confirmed the target ids existed. The rule is
+// blunt on purpose: on this site a bare fragment href is always a bug.
+for (const segments of pagePaths) {
+  let markup;
+  try {
+    markup = await html(...segments);
+  } catch {
+    continue;
+  }
+  const route = `/${segments.slice(0, -1).join('/')}`;
+  const bare = [...markup.matchAll(/href="(#[^"]*)"/g)].map((m) => m[1]);
+  if (bare.length) {
+    failures.push(
+      `${route} has ${bare.length} bare fragment link(s) (${bare.slice(0, 3).join(', ')}); ` +
+        'with <base href="/"> these resolve to the site root, use routerLink with a fragment',
+    );
+  }
+}
+
+// --- Structured data must parse, and say who this is.
+//
+// A broken JSON-LD block is invisible: the page renders identically and search
+// engines just drop it. So parse it rather than checking the string is present,
+// and confirm the sameAs profiles match the ones the footer links to, since
+// those are the same claim made twice.
+const SAME_AS = [
+  'https://www.linkedin.com/in/ravianandkumar/',
+  'https://github.com/ravianand1988',
+  'https://stackoverflow.com/users/2444505/ravi-anand',
+];
+
+{
+  const markup = await html('index.html');
+  const block = markup.match(
+    /<script type="application\/ld\+json">([\s\S]*?)<\/script>/,
+  )?.[1];
+
+  if (!block) {
+    failures.push('index.html has no application/ld+json block');
+  } else {
+    let data;
+    try {
+      data = JSON.parse(block);
+    } catch (error) {
+      failures.push(`application/ld+json does not parse: ${error.message}`);
+    }
+    if (data) {
+      if (data['@type'] !== 'Person') failures.push('structured data is not a Person');
+      if (!data.name) failures.push('structured data has no name');
+      if (!String(data.url ?? '').startsWith(SITE_URL)) {
+        failures.push('structured data url is not absolute on this site');
+      }
+      for (const profile of SAME_AS) {
+        if (!(data.sameAs ?? []).includes(profile)) {
+          failures.push(`structured data sameAs is missing ${profile}`);
+        }
+      }
+      // Check the footer actually links each profile, by href rather than by
+      // substring: the JSON-LD block contains these same URLs, so a plain
+      // "does the page mention it" test could never fail.
+      for (const profile of SAME_AS) {
+        if (!markup.includes(`href="${profile}"`)) {
+          failures.push(`sameAs claims ${profile} but no link on the page points there`);
+        }
+      }
+    }
+  }
+}
+
+// --- Heading order on every prerendered page.
+//
+// One h1, and no level skipped on the way down. A jump from h1 to h3 tells a
+// screen-reader user a level exists that does not, and it is the kind of thing
+// that only breaks once somebody edits markdown in a hurry.
+
+let headingsChecked = 0;
+
+for (const segments of pagePaths) {
+  let markup;
+  try {
+    markup = await html(...segments);
+  } catch {
+    continue; // a missing route is already reported above
+  }
+  const route = `/${segments.slice(0, -1).join('/')}`;
+
+  // Strip the inline JSON-LD before scanning: it is script content, not markup,
+  // but it can contain angle brackets that confuse a tag-level regex.
+  const body = markup.replace(/<script[\s\S]*?<\/script>/g, '');
+  const levels = [...body.matchAll(/<h([1-6])[\s>]/g)].map((m) => Number(m[1]));
+
+  const h1s = levels.filter((level) => level === 1).length;
+  if (h1s !== 1) failures.push(`${route} has ${h1s} h1 elements, expected exactly 1`);
+
+  for (let i = 1; i < levels.length; i += 1) {
+    const jump = levels[i] - levels[i - 1];
+    if (jump > 1) {
+      failures.push(`${route} skips a heading level: h${levels[i - 1]} straight to h${levels[i]}`);
+      break;
+    }
+  }
+  headingsChecked += levels.length;
+}
+
 if (failures.length) {
   console.error('verify-build FAILED:');
   for (const failure of failures) console.error(`  - ${failure}`);
@@ -138,5 +288,5 @@ if (failures.length) {
 }
 
 console.log(
-  `verify-build: 5 static routes, ${writingSlugs.length} posts, ${projectSlugs.length} projects, 404 fallback, feeds at root, ${referenced.size} referenced assets present, no em-dashes`,
+  `verify-build: 5 static routes, ${writingSlugs.length} posts, ${projectSlugs.length} projects, 404 fallback, feeds at root, ${referenced.size} referenced assets present, no em-dashes, ${headingsChecked} headings in order, no bare fragment links, no stray assets, Person structured data`,
 );

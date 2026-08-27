@@ -1,0 +1,28 @@
+<aside class="rail" aria-label="Page details">
+  <!-- Page-specific rail controls, e.g. the writing index's pillar filter. -->
+  <ng-content />
+
+  <div class="groups">
+    @for (group of groups(); track group.label) {
+      <div class="group">
+        <p class="group-label">{{ group.label }}</p>
+        @for (value of group.values; track value) {
+          <p class="group-value">{{ value }}</p>
+        }
+      </div>
+    }
+  </div>
+
+  @if (sections().length) {
+    <nav class="contents" aria-label="On this page">
+      <p class="group-label contents-label">On this page</p>
+      <ul>
+        @for (section of sections(); track section.id) {
+          <li>
+            <a [routerLink]="[]" [fragment]="section.id">{{ section.text }}</a>
+          </li>
+        }
+      </ul>
+    </nav>
+  }
+</aside>

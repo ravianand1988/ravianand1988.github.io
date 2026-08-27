@@ -1,0 +1,97 @@
+.graph {
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+// The svg has a minimum width: below it the node labels start colliding, so it
+// scrolls rather than shrinking into illegibility.
+.scroller {
+  overflow-x: auto;
+  border: 1px solid var(--border);
+  border-radius: 3px;
+  background: var(--surface);
+  padding: var(--space-3) var(--space-2);
+}
+
+.canvas {
+  display: block;
+  width: 100%;
+  min-width: 30rem;
+  height: auto;
+}
+
+.box {
+  fill: var(--panel);
+  stroke: var(--border);
+  stroke-width: 1;
+}
+
+.box-core {
+  fill: var(--brass-wash);
+  stroke: var(--accent);
+}
+
+.name {
+  font-family: var(--font-display);
+  font-size: 15px;
+  font-weight: 600;
+  fill: var(--ink);
+}
+
+.detail,
+.version {
+  font-family: var(--font-mono);
+  font-size: 11px;
+}
+
+.detail {
+  fill: var(--meta);
+}
+
+.version {
+  fill: var(--accent);
+}
+
+.trace {
+  fill: none;
+  stroke: var(--border);
+  stroke-width: 1.5;
+}
+
+// The release travelling out to its consumers. The only motion on the site.
+.pulse {
+  fill: none;
+  stroke: var(--accent);
+  stroke-width: 1.5;
+  stroke-linecap: round;
+  stroke-dasharray: 26 1200;
+  animation: trace-travel 3.4s linear infinite;
+}
+
+@keyframes trace-travel {
+  from {
+    stroke-dashoffset: 1226;
+  }
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
+figcaption {
+  font-size: var(--step--1);
+  color: var(--ink-subtle);
+  max-width: var(--measure-prose);
+}
+
+// The global reduced-motion rule shortens durations, which for an infinite
+// animation means restarting forever instead of stopping. Turn it off outright
+// and leave the trace drawn.
+@media (prefers-reduced-motion: reduce) {
+  .pulse {
+    animation: none;
+    stroke-dasharray: none;
+    opacity: 0.9;
+  }
+}

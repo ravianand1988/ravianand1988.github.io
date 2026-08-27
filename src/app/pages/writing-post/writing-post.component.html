@@ -1,14 +1,18 @@
 @if (post(); as entry) {
-  <main class="wrap">
-    <p class="eyebrow">{{ entry.pillar }} · {{ entry.date | date: 'MMMM y' }}</p>
-    <h1>{{ entry.title }}</h1>
-    <hr class="rule" />
-    <article class="prose" [innerHTML]="body()"></article>
-  </main>
+  <div class="track">
+    <app-page-rail class="track-rail" [groups]="railGroups()" [sections]="railSections()" />
+
+    <main class="track-main">
+      <h1>{{ entry.title }}</h1>
+      <article class="prose" [innerHTML]="body()"></article>
+    </main>
+  </div>
 } @else {
-  <main class="wrap">
-    <p class="eyebrow">404</p>
-    <h1>That post is not here.</h1>
-    <p><a href="/writing">See everything I have written</a></p>
-  </main>
+  <div class="track is-solo">
+    <main class="track-main">
+      <p class="eyebrow">404</p>
+      <h1>That post is not here.</h1>
+      <p><a href="/writing">See everything I have written</a></p>
+    </main>
+  </div>
 }

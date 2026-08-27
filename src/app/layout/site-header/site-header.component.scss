@@ -1,11 +1,11 @@
+// Width comes from .shell-width so the header lines up with the two-track
+// grid below it instead of with the old 74ch column.
 .site-header {
   display: flex;
-  align-items: baseline;
+  align-items: center;
   gap: var(--space-3);
-  max-width: 74ch;
-  margin: 0 auto;
-  padding: var(--space-3) var(--space-3) var(--space-2);
-  border-bottom: 1px solid var(--rule);
+  padding-block: var(--space-3) var(--space-2);
+  border-bottom: 1px solid var(--border);
 }
 
 .brand {
@@ -38,11 +38,18 @@
 
 @media (max-width: 640px) {
   .site-header {
-    flex-direction: column;
-    gap: var(--space-2);
+    flex-wrap: wrap;
+    gap: var(--space-1) var(--space-2);
   }
 
   .brand {
+    // Full row, so the nav and the toggle share the row underneath rather than
+    // the toggle being pushed to a third line of its own.
+    flex: 1 0 100%;
     margin-right: 0;
+  }
+
+  .links {
+    margin-right: auto;
   }
 }

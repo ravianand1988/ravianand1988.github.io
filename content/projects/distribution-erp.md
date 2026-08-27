@@ -3,6 +3,22 @@ title: 'Distribution ERP: Windows Forms to web'
 description: 'Replacing a desktop app that ran an FMCG wholesale distributor since 2017, module by module, without the business stopping.'
 date: 2026-08-26
 pillar: migrations
+stack:
+  - 'ASP.NET Core on .NET 10'
+  - 'EF Core'
+  - 'SQL Server'
+  - 'Angular 21'
+  - 'Angular Material, AG Grid'
+  - 'IIS on one Windows host'
+metrics:
+  - label: 'Brands served'
+    value: '~90'
+  - label: 'Frontend'
+    value: '32,000 lines'
+  - label: 'Releases'
+    value: '15'
+  - label: 'Pull requests'
+    value: '~100'
 ---
 
 For most of a decade, an FMCG wholesale distributor working with around 90 consumer

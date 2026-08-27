@@ -18,12 +18,16 @@ const W = 1200;
 const H = 630;
 const PAD = 84;
 
-const PAPER = '#faf7f2';
-const INK = '#17130e';
-const ACCENT = '#7c2a20';
-const BRASS = '#c9a15b';
-const META = '#8a7b65';
-const RULE = '#dcd5c9';
+// Core & Consumers, light theme. Kept in step with src/styles/_tokens.scss by
+// hand: this runs outside the Angular build and cannot read the emitted CSS.
+const PAPER = '#eef2f6';
+const PANEL = '#e3e9ef';
+const WASH = '#f3ead8';
+const INK = '#0d141b';
+const ACCENT = '#855e1e';
+const BRASS = '#855e1e';
+const META = '#5a6874';
+const RULE = '#cfd9e2';
 
 async function loadFont(name) {
   const decompressed = await decompress(await readFile(join('src', 'fonts', name)));
@@ -45,9 +49,20 @@ function run(font, text, x, y, size, tracking = 0) {
   for (const char of text) {
     const glyph = font.charToGlyph(char);
     if (previous) cursor += font.getKerningValue(previous, glyph) * scale;
-    data += glyph.getPath(cursor, y, size).toPathData(2) + ' ';
+    // Integer x, deliberately. opentype.js emits literal NaN into path data for
+    // some glyphs placed at a fractional offset, which makes resvg abandon the
+    // rest of the path: the card rendered "I take frontend" and then stopped.
+    // The commands array is clean, so it happens during serialisation. Rounding
+    // to a whole pixel at 1200px wide is invisible and removes the whole class
+    // of bug. The fractional cursor is still what accumulates, so kerning and
+    // tracking do not drift.
+    data += glyph.getPath(Math.round(cursor), y, size).toPathData(2) + ' ';
     cursor += glyph.advanceWidth * scale + tracking;
     previous = glyph;
+  }
+
+  if (data.includes('NaN')) {
+    throw new Error(`build-og-image: NaN in outlined path for "${text}"`);
   }
 
   return { data: data.trim(), width: cursor - x };
@@ -56,12 +71,21 @@ function run(font, text, x, y, size, tracking = 0) {
 // Sequential, not Promise.all. wawoff2 is a WASM module and is not reentrant:
 // two concurrent decompressions corrupt each other's output, and the corruption
 // surfaces as an unrelated "Unsupported OpenType signature" much later.
-const serif = await loadFont('instrument-serif-400.woff2');
+// Archivo replaces Instrument Serif. One caveat worth writing down: opentype.js
+// parses the fvar table but does not apply it, so glyph outlines come out at the
+// font's default instance no matter what weight is requested. Verified by
+// comparing path data at wght 400 and 900, which is byte-identical. The card
+// therefore uses the default weight rather than the 700 the site's h1 uses.
+// Browsers do apply the axis, so the page itself is unaffected.
+const display = await loadFont('archivo-variable.woff2');
 const sans = await loadFont('geist-variable.woff2');
 
-const SERIF = 72;
-const LEADING = 84;
-const FIRST_BASELINE = 268;
+// Sized so the longest line clears the graph column on the right. At 66 the
+// second line ran to 814px and collided with the core node.
+const DISPLAY = 56;
+const LEADING = 68;
+const FIRST_BASELINE = 250;
+const GRAPH_COL_X = PAD + 700;
 
 const lines = [
   [{ text: 'I take frontends that have', fill: INK }],
@@ -78,7 +102,7 @@ lines.forEach((spans, i) => {
   let x = PAD;
   const y = FIRST_BASELINE + i * LEADING;
   for (const span of spans) {
-    const { data, width } = run(serif, span.text, x, y, SERIF);
+    const { data, width } = run(display, span.text, x, y, DISPLAY, -1.4);
     paths.push(`<path d="${data}" fill="${span.fill}"/>`);
     x += width;
   }
@@ -90,10 +114,40 @@ paths.push(`<path d="${eyebrow.data}" fill="${META}"/>`);
 const footer = run(sans, 'Frontend Tech Lead, Berlin', PAD, 560, 24);
 paths.push(`<path d="${footer.data}" fill="${META}"/>`);
 
+// The signature, small, in the corner: a core and three consumers with the same
+// orthogonal routing and junction pads the site uses. Drawn with rects and
+// paths, so no font matching is involved.
+const GX = GRAPH_COL_X;
+const GY = 250;
+const CORE = { x: GX, y: GY + 44, w: 108, h: 44 };
+const CONS_X = GX + 190;
+const CONS_W = 76;
+const CONS_H = 32;
+const ROWS = [GY, GY + 50, GY + 100];
+const TRUNK = GX + 150;
+const R = 8;
+
+const graph = [`<rect x="${CORE.x}" y="${CORE.y}" width="${CORE.w}" height="${CORE.h}" rx="3" fill="${WASH}" stroke="${ACCENT}"/>`];
+const coreMidY = CORE.y + CORE.h / 2;
+
+for (const top of ROWS) {
+  const midY = top + CONS_H / 2;
+  const d =
+    Math.abs(midY - coreMidY) < 0.5
+      ? `M${CORE.x + CORE.w},${coreMidY} H${CONS_X}`
+      : `M${CORE.x + CORE.w},${coreMidY} H${TRUNK - R} Q${TRUNK},${coreMidY} ${TRUNK},${coreMidY + (midY > coreMidY ? R : -R)} V${midY - (midY > coreMidY ? R : -R)} Q${TRUNK},${midY} ${TRUNK + R},${midY} H${CONS_X}`;
+  graph.push(`<path d="${d}" fill="none" stroke="${ACCENT}" stroke-width="1.5"/>`);
+  if (Math.abs(midY - coreMidY) >= 0.5) {
+    graph.push(`<circle cx="${TRUNK}" cy="${midY}" r="2.4" fill="${ACCENT}"/>`);
+  }
+  graph.push(`<rect x="${CONS_X}" y="${top}" width="${CONS_W}" height="${CONS_H}" rx="3" fill="${PANEL}" stroke="${RULE}"/>`);
+}
+
 const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="${W}" height="${H}" viewBox="0 0 ${W} ${H}">
   <rect width="${W}" height="${H}" fill="${PAPER}"/>
   <rect x="0" y="0" width="${W}" height="6" fill="${BRASS}"/>
   <line x1="${PAD}" y1="516" x2="${W - PAD}" y2="516" stroke="${RULE}" stroke-width="1"/>
+  ${graph.join('\n  ')}
   ${paths.join('\n  ')}
 </svg>`;
 
