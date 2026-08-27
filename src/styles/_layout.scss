@@ -1,0 +1,78 @@
+// The two-track grid.
+//
+// A narrow rail carries metadata that has real content behind it (pillar, date,
+// stack, scale, the headings on the page) and the main track carries prose at a
+// comfortable measure. The single centred column it replaces left two thirds of
+// a laptop viewport empty and had nowhere to put any of that.
+//
+// Below the breakpoint the rail does not simply stack above the article, which
+// would push the first paragraph off the screen behind a list of metadata. It
+// becomes a single horizontal row of chips. The rail component owns that
+// change; this file only stops reserving a column for it.
+
+$rail: 13rem;
+$main: 44rem;
+$track-breakpoint: 62rem; // ~992px, just under a 1024 viewport with its scrollbar
+
+.track {
+  max-width: 74rem;
+  margin: 0 auto;
+  padding: var(--space-5) var(--space-3);
+  display: grid;
+  gap: var(--space-3);
+  grid-template-columns: minmax(0, 1fr);
+  align-items: start;
+}
+
+// The main track is wider than the prose measure on purpose. Paragraphs are
+// held to --measure-prose by .prose, while code blocks, the headline and the
+// Gerber viewer get the whole column. Pinning the track itself to the prose
+// measure squeezed all three of those and pushed the h1 onto a third line.
+.track > .track-main {
+  min-width: 0; // grid items default to min-width auto and code blocks overflow it
+  max-width: $main;
+}
+
+@media (min-width: $track-breakpoint) {
+  .track {
+    grid-template-columns: $rail minmax(0, $main);
+    gap: var(--space-4);
+    justify-content: center;
+  }
+
+  // Sticky so the metadata and the on-this-page list stay reachable through a
+  // long case study. Only above the breakpoint: sticky inside a horizontally
+  // scrolling chip row does nothing useful.
+  .track > .track-rail {
+    position: sticky;
+    top: var(--space-3);
+  }
+}
+
+// Shared width for the header and footer so they line up with the grid above
+// rather than with the old 74ch column.
+.shell-width {
+  max-width: 74rem;
+  margin: 0 auto;
+  padding-inline: var(--space-3);
+}
+
+.skip-link {
+  position: absolute;
+  left: -9999px;
+  top: 0;
+  z-index: 10;
+  padding: 0.5rem 0.75rem;
+  background: var(--surface);
+  color: var(--ink);
+  border: 1px solid var(--accent);
+  border-radius: 3px;
+  font-family: var(--font-mono);
+  font-size: 0.78rem;
+  text-decoration: none;
+}
+
+.skip-link:focus {
+  left: var(--space-2);
+  top: var(--space-2);
+}

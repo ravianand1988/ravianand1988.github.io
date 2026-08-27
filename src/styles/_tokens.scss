@@ -58,8 +58,14 @@
   --warn-text: #7a5410;
   --ok: #2f6b4f;
 
-  --measure-prose: 68ch;
-  --measure-head: 24ch;
+  // Character counts, not ch units naively.
+  //
+  // ch is the advance of "0", which in Geist is far wider than average
+  // lowercase, so 68ch rendered 96 characters per line and read like a wall.
+  // 50ch measures at roughly 70, which is inside the comfortable range.
+  // Re-measure if the body face ever changes: the mapping is per-font.
+  --measure-prose: 50ch;
+  --measure-head: 22ch;
   --space-1: 0.5rem;
   --space-2: 1rem;
   --space-3: 1.75rem;
@@ -69,28 +75,47 @@
 
 // Dark is a cool graphite with layered surfaces, not black with a bright accent.
 // Brass lightens so it keeps contrast on the dark ground instead of glowing.
+//
+// Declared once as a mixin because the theme has three states, not two, and two
+// of them need these same values:
+//
+//   no data-theme attribute  -> follow the OS, the default
+//   data-theme="dark"        -> dark regardless of the OS
+//   data-theme="light"       -> light regardless of the OS
+//
+// The :not([data-theme='light']) guard is what makes an explicit light choice
+// beat a dark OS. Without it the media query would win and the toggle would
+// appear broken in exactly one direction.
+@mixin dark-tokens {
+  --bg: #0d1319;
+  --surface: #141d25;
+  --panel: #1a242e;
+
+  --ink: #e7edf3;
+  --ink-muted: #9aabb8;
+  --ink-subtle: #8b9baa;
+  --meta: #7d8d9b;
+
+  --border: #26313d;
+  --border-soft: #1d2731;
+
+  --accent: #d9a94f;
+  --brass-wash: #241d10;
+
+  // Same value as light: see the note above. The package's fill is fixed.
+  --canvas-bg: #0d1117;
+  --warn-bg: #241d10;
+  --warn-border: #4a3a1e;
+  --warn-text: #d9a94f;
+  --ok: #6fae8c;
+}
+
 @media (prefers-color-scheme: dark) {
-  :root {
-    --bg: #0d1319;
-    --surface: #141d25;
-    --panel: #1a242e;
-
-    --ink: #e7edf3;
-    --ink-muted: #9aabb8;
-    --ink-subtle: #8b9baa;
-    --meta: #7d8d9b;
-
-    --border: #26313d;
-    --border-soft: #1d2731;
-
-    --accent: #d9a94f;
-    --brass-wash: #241d10;
-
-    // Same value as light: see the note above. The package's fill is fixed.
-    --canvas-bg: #0d1117;
-    --warn-bg: #241d10;
-    --warn-border: #4a3a1e;
-    --warn-text: #d9a94f;
-    --ok: #6fae8c;
+  :root:not([data-theme='light']) {
+    @include dark-tokens;
   }
+}
+
+:root[data-theme='dark'] {
+  @include dark-tokens;
 }

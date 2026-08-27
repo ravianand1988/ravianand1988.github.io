@@ -100,3 +100,43 @@ ${urls}
 </urlset>
 `;
 }
+
+/**
+ * Stamps ids onto h2 and h3 elements and returns the headings it found.
+ *
+ * Done by rewriting marked's output rather than through a custom heading
+ * renderer, so it does not move when marked changes its renderer signature.
+ * That is safe only because the input is first-party markdown compiled at build
+ * time: headings here are a single line of simple inline content.
+ *
+ * Duplicate headings get a numeric suffix, because two sections called "What
+ * shipped" in one document would otherwise share an anchor and the second one
+ * would be unreachable.
+ */
+export function addHeadingIds(html) {
+  const headings = [];
+  const seen = new Map();
+
+  const out = String(html).replace(/<h([23])>([\s\S]*?)<\/h\1>/g, (match, level, inner) => {
+    const text = inner
+      .replace(/<[^>]+>/g, '')
+      .replace(/&lt;/g, '<')
+      .replace(/&gt;/g, '>')
+      .replace(/&quot;/g, '"')
+      .replace(/&#39;/g, "'")
+      .replace(/&amp;/g, '&')
+      .trim();
+
+    const base = slugify(text);
+    if (!base) return match;
+
+    const previous = seen.get(base) ?? 0;
+    seen.set(base, previous + 1);
+    const id = previous === 0 ? base : `${base}-${previous + 1}`;
+
+    headings.push({ id, text, level: Number(level) });
+    return `<h${level} id="${id}">${inner}</h${level}>`;
+  });
+
+  return { html: out, headings };
+}

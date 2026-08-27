@@ -1,6 +1,7 @@
 import { Component, computed, inject, input } from '@angular/core';
 import { DomSanitizer } from '@angular/platform-browser';
 import { ContentService } from '../../core/content';
+import { PageRailComponent, RailGroup, RailSection } from '../../layout/page-rail/page-rail.component';
 import { Seo } from '../../core/seo';
 import { GerberDemoComponent } from '../../features/gerber-demo/gerber-demo.component';
 
@@ -12,9 +13,11 @@ import { GerberDemoComponent } from '../../features/gerber-demo/gerber-demo.comp
  */
 const DEMO_SLUG = 'gerber-viewer';
 
+const MONTH_YEAR = new Intl.DateTimeFormat('en-GB', { month: 'short', year: 'numeric' });
+
 @Component({
   selector: 'app-project-detail',
-  imports: [GerberDemoComponent],
+  imports: [GerberDemoComponent, PageRailComponent],
   templateUrl: './project-detail.component.html',
 })
 export class ProjectDetailComponent {
@@ -37,6 +40,24 @@ export class ProjectDetailComponent {
   });
 
   readonly showDemo = computed(() => this.slug() === DEMO_SLUG);
+
+  readonly railGroups = computed<RailGroup[]>(() => {
+    const entry = this.project();
+    if (!entry) return [];
+    return [
+      { label: 'Pillar', values: [entry.pillar.replace(/-/g, ' ')] },
+      { label: 'Written', values: [MONTH_YEAR.format(new Date(entry.date))] },
+    ];
+  });
+
+  // Level 2 only. The case studies are almost entirely h2, and mixing in the
+  // occasional h3 would make the list look nested without earning it.
+  readonly railSections = computed<RailSection[]>(
+    () =>
+      this.project()
+        ?.headings.filter((heading) => heading.level === 2)
+        .map(({ id, text }) => ({ id, text })) ?? [],
+  );
 
   // Same rationale as WritingPostComponent: first-party markdown compiled at
   // build time, no user-input path, and the sanitizer would strip Shiki's

@@ -8,6 +8,20 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <link rel="icon" type="image/svg+xml" href="assets/favicon.svg">
   <link rel="icon" type="image/x-icon" href="assets/favicon.svg">
+  <!--
+    Every page is prerendered as light-or-follow-the-OS HTML, so a visitor who
+    chose a theme against their OS would see one frame of the wrong one before
+    Angular hydrates. This runs before first paint and stamps the attribute the
+    tokens key off. It deliberately writes nothing for "system", leaving the
+    prefers-color-scheme media query in charge. ThemeService is the owner after
+    hydration; this only closes the gap before it.
+  -->
+  <script>
+    try {
+      var t = localStorage.getItem('theme');
+      if (t === 'dark' || t === 'light') document.documentElement.setAttribute('data-theme', t);
+    } catch (e) {}
+  </script>
 </head>
 <body>
   <app-root></app-root>

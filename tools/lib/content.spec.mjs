@@ -7,6 +7,7 @@ import {
   normalizeDate,
   buildRssXml,
   buildSitemapXml,
+  addHeadingIds,
 } from './content.mjs';
 
 describe('slugify', () => {
@@ -137,5 +138,49 @@ describe('buildSitemapXml', () => {
     expect(xml.match(/<url>/g)).toHaveLength(3);
     expect(xml).toContain('<loc>https://ravianand1988.github.io/</loc>');
     expect(xml).toContain('<loc>https://ravianand1988.github.io/writing/rules</loc>');
+  });
+});
+
+describe('addHeadingIds', () => {
+  it('stamps ids on h2 and h3 and reports them in document order', () => {
+    const { html, headings } = addHeadingIds('<h2>What shipped</h2><p>a</p><h3>One box</h3>');
+    expect(html).toContain('<h2 id="what-shipped">What shipped</h2>');
+    expect(html).toContain('<h3 id="one-box">One box</h3>');
+    expect(headings).toEqual([
+      { id: 'what-shipped', text: 'What shipped', level: 2 },
+      { id: 'one-box', text: 'One box', level: 3 },
+    ]);
+  });
+
+  it('suffixes a repeated heading so the second one is still reachable', () => {
+    const { html, headings } = addHeadingIds('<h2>What shipped</h2><h2>What shipped</h2>');
+    expect(html).toContain('id="what-shipped"');
+    expect(html).toContain('id="what-shipped-2"');
+    expect(headings.map((h) => h.id)).toEqual(['what-shipped', 'what-shipped-2']);
+  });
+
+  it('takes the text from inline markup but leaves the markup in place', () => {
+    const { html, headings } = addHeadingIds('<h2>Use <code>EF Core</code> here</h2>');
+    expect(headings[0].text).toBe('Use EF Core here');
+    expect(headings[0].id).toBe('use-ef-core-here');
+    expect(html).toContain('<code>EF Core</code>');
+  });
+
+  it('decodes entities before slugging, so the id matches the visible text', () => {
+    const { headings } = addHeadingIds('<h2>Ravi&#39;s rules &amp; exceptions</h2>');
+    expect(headings[0].text).toBe("Ravi's rules & exceptions");
+    expect(headings[0].id).toBe('ravi-s-rules-exceptions');
+  });
+
+  it('leaves h1 and h4 alone: the rail only lists h2, and h1 is the page title', () => {
+    const { html, headings } = addHeadingIds('<h1>Title</h1><h4>Aside</h4>');
+    expect(html).toBe('<h1>Title</h1><h4>Aside</h4>');
+    expect(headings).toEqual([]);
+  });
+
+  it('skips a heading with no sluggable text rather than emitting an empty id', () => {
+    const { html, headings } = addHeadingIds('<h2><code>---</code></h2>');
+    expect(html).not.toContain('id=""');
+    expect(headings).toEqual([]);
   });
 });
