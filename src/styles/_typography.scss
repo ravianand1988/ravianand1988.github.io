@@ -57,12 +57,17 @@ h3 {
   line-height: 1.1;
   letter-spacing: -0.025em;
   margin: 0 0 var(--space-2);
-  max-width: var(--measure-head);
   text-wrap: balance;
 }
 
+// Only the page title gets a display measure. Section headings belong to the
+// prose flow and take their width from it, so they wrap when the column runs
+// out and not before: --measure-head was capping an h2 at 358px inside a 561px
+// column, which broke "The hard part was never the CRUD" over two lines with
+// 118px to spare.
 h1 {
   font-weight: 700;
+  max-width: var(--measure-head);
 }
 
 // Archivo is roman only, so italic here would be a synthesised oblique and it

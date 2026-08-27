@@ -1,4 +1,5 @@
 import { TestBed } from '@angular/core/testing';
+import { provideRouter } from '@angular/router';
 import { PageRailComponent } from './page-rail.component';
 
 function render(inputs: Partial<{ groups: unknown; sections: unknown }>) {
@@ -12,7 +13,12 @@ function render(inputs: Partial<{ groups: unknown; sections: unknown }>) {
 
 describe('PageRailComponent', () => {
   beforeEach(async () => {
-    await TestBed.configureTestingModule({ imports: [PageRailComponent] }).compileComponents();
+    await TestBed.configureTestingModule({
+      imports: [PageRailComponent],
+      // The rail's on-this-page links use routerLink with a fragment, so the
+      // component needs a router even though nothing here navigates.
+      providers: [provideRouter([])],
+    }).compileComponents();
   });
 
   it('renders each group as a label with its values', () => {
@@ -30,7 +36,7 @@ describe('PageRailComponent', () => {
     );
   });
 
-  it('links the on-this-page list to heading fragments', () => {
+  it('links the on-this-page list to heading fragments on the current route', () => {
     const el = render({
       groups: [],
       sections: [
@@ -39,7 +45,17 @@ describe('PageRailComponent', () => {
       ],
     });
     const links = Array.from(el.querySelectorAll<HTMLAnchorElement>('.contents a'));
-    expect(links.map((a) => a.getAttribute('href'))).toEqual(['#what-shipped', '#what-is-left']);
+    const hrefs = links.map((a) => a.getAttribute('href') ?? '');
+
+    // The route is "/" under test, so these read "/#id". What matters is that
+    // they are NOT bare fragments: index.html carries <base href="/">, so a
+    // bare "#id" resolves against the site root and navigated to the homepage
+    // from every other route. This test previously asserted the broken form.
+    for (const href of hrefs) {
+      expect(href.startsWith('#')).toBe(false);
+      expect(href).toMatch(/^\/.*#/);
+    }
+    expect(hrefs.map((h) => h.slice(h.indexOf('#')))).toEqual(['#what-shipped', '#what-is-left']);
     expect(links.map((a) => a.textContent?.trim())).toEqual(['What shipped', 'What is left']);
   });
 

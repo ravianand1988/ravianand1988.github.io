@@ -18,7 +18,9 @@
       <p class="group-label contents-label">On this page</p>
       <ul>
         @for (section of sections(); track section.id) {
-          <li><a [href]="'#' + section.id">{{ section.text }}</a></li>
+          <li>
+            <a [routerLink]="[]" [fragment]="section.id">{{ section.text }}</a>
+          </li>
         }
       </ul>
     </nav>

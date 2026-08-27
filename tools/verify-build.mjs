@@ -131,6 +131,40 @@ for (const dir of ['content', 'src']) {
   }
 }
 
+const pagePaths = [
+  ['index.html'],
+  ['writing', 'index.html'],
+  ['projects', 'index.html'],
+  ['ai', 'index.html'],
+  ['about', 'index.html'],
+  ...writingSlugs.map((slug) => ['writing', slug, 'index.html']),
+  ...projectSlugs.map((slug) => ['projects', slug, 'index.html']),
+];
+
+// --- No bare fragment links anywhere.
+//
+// index.html carries <base href="/">, so a relative href="#id" resolves against
+// the site root rather than the current document: every rail link and the skip
+// link navigated to the homepage from any route but "/". Caught in review, not
+// by the earlier check, which only confirmed the target ids existed. The rule is
+// blunt on purpose: on this site a bare fragment href is always a bug.
+for (const segments of pagePaths) {
+  let markup;
+  try {
+    markup = await html(...segments);
+  } catch {
+    continue;
+  }
+  const route = `/${segments.slice(0, -1).join('/')}`;
+  const bare = [...markup.matchAll(/href="(#[^"]*)"/g)].map((m) => m[1]);
+  if (bare.length) {
+    failures.push(
+      `${route} has ${bare.length} bare fragment link(s) (${bare.slice(0, 3).join(', ')}); ` +
+        'with <base href="/"> these resolve to the site root, use routerLink with a fragment',
+    );
+  }
+}
+
 // --- Structured data must parse, and say who this is.
 //
 // A broken JSON-LD block is invisible: the page renders identically and search
@@ -186,15 +220,6 @@ const SAME_AS = [
 // One h1, and no level skipped on the way down. A jump from h1 to h3 tells a
 // screen-reader user a level exists that does not, and it is the kind of thing
 // that only breaks once somebody edits markdown in a hurry.
-const pagePaths = [
-  ['index.html'],
-  ['writing', 'index.html'],
-  ['projects', 'index.html'],
-  ['ai', 'index.html'],
-  ['about', 'index.html'],
-  ...writingSlugs.map((slug) => ['writing', slug, 'index.html']),
-  ...projectSlugs.map((slug) => ['projects', slug, 'index.html']),
-];
 
 let headingsChecked = 0;
 
@@ -232,5 +257,5 @@ if (failures.length) {
 }
 
 console.log(
-  `verify-build: 5 static routes, ${writingSlugs.length} posts, ${projectSlugs.length} projects, 404 fallback, feeds at root, ${referenced.size} referenced assets present, no em-dashes, ${headingsChecked} headings in order, Person structured data`,
+  `verify-build: 5 static routes, ${writingSlugs.length} posts, ${projectSlugs.length} projects, 404 fallback, feeds at root, ${referenced.size} referenced assets present, no em-dashes, ${headingsChecked} headings in order, no bare fragment links, Person structured data`,
 );
