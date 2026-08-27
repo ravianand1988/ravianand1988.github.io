@@ -9,28 +9,6 @@
       inconsistently by hand.
     </p>
 
-    <h2>What is in it</h2>
-    <ul>
-      <li>
-        <strong>Ticket refinement.</strong> Turns a vague ticket into a specification with scope and
-        acceptance criteria.
-      </li>
-      <li>
-        <strong>Implementation planning.</strong> Reads the affected repositories and produces a
-        step-by-step plan before any code is written.
-      </li>
-      <li>
-        <strong>PR creation and review.</strong> Fills the repository's own template, and reviews
-        changes against our standards.
-      </li>
-      <li>
-        <strong>Database migrations.</strong> Creates and verifies migrations against our conventions.
-      </li>
-      <li>
-        <strong>Branch naming and release publishing.</strong> The small conventions nobody remembers.
-      </li>
-    </ul>
-
     <h2>Why it worked</h2>
     <p>
       Because each skill encodes a decision the team had already made and kept re-litigating. The
@@ -38,9 +16,53 @@
       consistently.
     </p>
 
+    <h2>The public version</h2>
     <p>
-      A clean-room version, written from scratch and free of anything employer-specific, is on its
-      way here. This page will carry it, with installation instructions, when it lands.
+      I have rewritten it clean-room, with nothing employer-specific in it, and one significant
+      design change. The original hard-coded my team's conventions: our branch format, our PR
+      template, our migration style. That made it excellent for us and useless anywhere else, and
+      actively harmful in a second repository, because it produced confident output in the wrong
+      shape.
+    </p>
+    <p>
+      So the public skills discover conventions instead of carrying them. One skill reads the agent
+      instructions, the contributor docs, the templates a repository already has, and failing all of
+      that, the git history. Every other skill depends on it. When a convention genuinely cannot be
+      found, the skill asks once and offers to write the answer down, so the next run does not have
+      to ask again.
+    </p>
+
+    <h2>The six skills</h2>
+    <ul>
+      <li>
+        <strong>project-conventions.</strong> Works out how this repository does things. Every other
+        skill calls it first.
+      </li>
+      <li>
+        <strong>refine-ticket.</strong> Turns a vague ticket into something buildable, with scope,
+        acceptance criteria and an explicit out-of-scope list. Decides what.
+      </li>
+      <li>
+        <strong>plan-implementation.</strong> Reads the affected code and produces an ordered plan
+        where every step names how it is verified. Decides how.
+      </li>
+      <li>
+        <strong>open-pr.</strong> Fills the repository's own template, and refuses to invent content
+        for a section it cannot answer.
+      </li>
+      <li>
+        <strong>review-changes.</strong> Reviews against the standards a project states, separates
+        defects from preferences, and constructs the failing case before reporting a defect.
+      </li>
+      <li>
+        <strong>create-migration.</strong> Schema changes, in the project's own style, with the
+        rollback actually tested rather than assumed.
+      </li>
+    </ul>
+
+    <p>
+      No code and no dependencies: each skill is a single markdown file. That is the point. The
+      artifact is the written-down decision, and the model is only the delivery mechanism.
     </p>
   </div>
 </main>
