@@ -107,3 +107,30 @@
   border: 1px dashed var(--border);
   border-radius: 6px;
 }
+
+// A named decision lifted out of the prose by tools/lib/content.mjs, from the
+// bold-lead convention the case studies already use. Not an Angular component:
+// the content is compiled markdown, so this is a treatment of generated markup
+// rather than something a template can instantiate.
+.prose .decision {
+  margin: var(--space-3) 0;
+  padding: var(--space-2) var(--space-3);
+  border: 1px solid var(--border);
+  border-left: 2px solid var(--accent);
+  border-radius: 3px;
+  background: var(--surface);
+}
+
+.prose .decision-title {
+  margin: 0 0 0.35rem;
+  font-family: var(--font-display);
+  font-size: var(--step-1);
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  color: var(--ink);
+}
+
+.prose .decision-body {
+  margin: 0;
+  color: var(--ink-muted);
+}

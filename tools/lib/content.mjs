@@ -140,3 +140,66 @@ export function addHeadingIds(html) {
 
   return { html: out, headings };
 }
+
+/**
+ * Turns a bold-lead paragraph into a card.
+ *
+ * The case studies already use one convention for a named decision: a
+ * paragraph opening with bold text that ends in a full stop, then the reasoning
+ * after it. This lifts those out as cards so a reader skimming for judgement
+ * can find them, using the prose that is already there rather than a second
+ * copy in frontmatter.
+ *
+ * Deliberately adds no label of its own. The title is the author's own bold
+ * text, minus the trailing full stop, so the markup cannot claim a paragraph is
+ * a "decision" when it is something else written the same way.
+ */
+export function markDecisions(html) {
+  let count = 0;
+  const out = String(html).replace(
+    /<p><strong>([^<]+?)\.<\/strong>\s*([\s\S]*?)<\/p>/g,
+    (match, title, body) => {
+      if (!title.trim() || !body.trim()) return match;
+      count += 1;
+      return [
+        '<aside class="decision">',
+        `<p class="decision-title">${title.trim()}</p>`,
+        `<p class="decision-body">${body.trim()}</p>`,
+        '</aside>',
+      ].join('');
+    },
+  );
+  return { html: out, count };
+}
+
+/**
+ * Optional frontmatter for case studies: the stack it was built on, and the
+ * figures worth surfacing. Both are validated here so a typo fails the build
+ * rather than rendering an empty rail group or a metric with no number.
+ */
+export function assertOptionalMeta(entry, sourcePath) {
+  if (entry.stack !== undefined) {
+    if (!Array.isArray(entry.stack) || entry.stack.some((s) => typeof s !== 'string' || !s.trim())) {
+      throw new Error(`${sourcePath}: "stack" must be a list of non-empty strings`);
+    }
+  }
+  if (entry.metrics !== undefined) {
+    if (!Array.isArray(entry.metrics)) {
+      throw new Error(`${sourcePath}: "metrics" must be a list`);
+    }
+    for (const metric of entry.metrics) {
+      const ok =
+        metric &&
+        typeof metric === 'object' &&
+        typeof metric.label === 'string' &&
+        metric.label.trim() &&
+        metric.value !== undefined &&
+        String(metric.value).trim();
+      if (!ok) {
+        throw new Error(
+          `${sourcePath}: every metric needs a non-empty "label" and "value", got ${JSON.stringify(metric)}`,
+        );
+      }
+    }
+  }
+}

@@ -8,6 +8,8 @@ import {
   buildRssXml,
   buildSitemapXml,
   addHeadingIds,
+  markDecisions,
+  assertOptionalMeta,
 } from './content.mjs';
 
 describe('slugify', () => {
@@ -182,5 +184,75 @@ describe('addHeadingIds', () => {
     const { html, headings } = addHeadingIds('<h2><code>---</code></h2>');
     expect(html).not.toContain('id=""');
     expect(headings).toEqual([]);
+  });
+});
+
+describe('markDecisions', () => {
+  it('turns a bold-lead paragraph into a card, dropping the trailing stop', () => {
+    const { html, count } = markDecisions(
+      '<p><strong>Staying in C#.</strong> So the rules would port.</p>',
+    );
+    expect(count).toBe(1);
+    expect(html).toContain('<aside class="decision">');
+    expect(html).toContain('<p class="decision-title">Staying in C#</p>');
+    expect(html).toContain('<p class="decision-body">So the rules would port.</p>');
+    expect(html).not.toContain('<strong>');
+  });
+
+  it('leaves an ordinary paragraph alone', () => {
+    const input = '<p>Anyone can rewrite a customer form.</p>';
+    expect(markDecisions(input)).toEqual({ html: input, count: 0 });
+  });
+
+  it('leaves a bold paragraph with no reasoning after it alone', () => {
+    const input = '<p><strong>Just a bold lead.</strong></p>';
+    expect(markDecisions(input).count).toBe(0);
+  });
+
+  it('does not fire on bold text that is not the lead', () => {
+    const input = '<p>The point is <strong>versioned.</strong> That is the word.</p>';
+    expect(markDecisions(input).count).toBe(0);
+  });
+
+  it('converts several decisions in one document', () => {
+    const { count } = markDecisions(
+      '<p><strong>One.</strong> First reason.</p><p>Filler.</p><p><strong>Two.</strong> Second reason.</p>',
+    );
+    expect(count).toBe(2);
+  });
+});
+
+describe('assertOptionalMeta', () => {
+  it('accepts an entry with neither field', () => {
+    expect(() => assertOptionalMeta({}, 'f.md')).not.toThrow();
+  });
+
+  it('accepts a well-formed stack and metrics list', () => {
+    expect(() =>
+      assertOptionalMeta(
+        { stack: ['EF Core'], metrics: [{ label: 'Releases', value: '15' }] },
+        'f.md',
+      ),
+    ).not.toThrow();
+  });
+
+  it('rejects a stack that is not a list of strings', () => {
+    expect(() => assertOptionalMeta({ stack: 'EF Core' }, 'f.md')).toThrow(/stack/);
+    expect(() => assertOptionalMeta({ stack: ['', 'ok'] }, 'f.md')).toThrow(/stack/);
+  });
+
+  it('rejects a metric missing its label or value', () => {
+    expect(() => assertOptionalMeta({ metrics: [{ value: '15' }] }, 'f.md')).toThrow(/label/);
+    expect(() => assertOptionalMeta({ metrics: [{ label: 'Releases' }] }, 'f.md')).toThrow(/label/);
+  });
+
+  it('names the file so the build failure is actionable', () => {
+    expect(() => assertOptionalMeta({ stack: 5 }, 'content/projects/x.md')).toThrow(
+      /content\/projects\/x\.md/,
+    );
+  });
+
+  it('accepts a numeric metric value, since yaml may parse one as a number', () => {
+    expect(() => assertOptionalMeta({ metrics: [{ label: 'Apps', value: 3 }] }, 'f.md')).not.toThrow();
   });
 });

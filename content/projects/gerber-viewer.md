@@ -3,6 +3,18 @@ title: 'Gerber viewer: one parser, three front ends'
 description: 'An RS-274X parser with a shared core, rendered in a desktop shell and directly to canvas in the browser.'
 date: 2026-08-10
 pillar: frontend-architecture
+stack:
+  - 'TypeScript'
+  - 'Angular, canvas'
+  - '.NET, WPF'
+  - 'Published to npm'
+metrics:
+  - label: 'Parser tests'
+    value: '60'
+  - label: 'Against this sample'
+    value: '10'
+  - label: 'Front ends'
+    value: '3'
 ---
 
 Gerber is the file format printed circuit boards are manufactured from. RS-274X is a

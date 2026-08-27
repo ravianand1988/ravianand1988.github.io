@@ -5,6 +5,8 @@
     <main class="track-main">
       <h1>{{ entry.title }}</h1>
 
+      <app-metric-list [metrics]="entry.metrics" />
+
       @if (graph(); as data) {
         <app-system-graph class="architecture" [graph]="data" />
       }

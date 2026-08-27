@@ -183,3 +183,35 @@ Order matters, so it is numbered.
    number of consuming libraries would suit the rail if they can be stated.
 3. Availability wording. Garden leave ends 2026-09-30. State "available from October 2026", or
    keep it vague?
+
+## Implementation notes
+
+Recorded as the phases landed, so the spec above does not quietly disagree with the code.
+
+- **`DecisionCard` is not an Angular component.** Case studies are markdown, so the decisions
+  live inside compiled HTML that a template cannot instantiate into. It is a pipeline transform
+  (`markDecisions` in `tools/lib/content.mjs`) plus prose styles. The trigger is the bold-lead
+  convention the case studies already use: a paragraph opening with bold text ending in a full
+  stop. Only `distribution-erp` uses that convention today, so it is the only case study with
+  cards. Adding them elsewhere is a markdown edit, not a code change.
+- **`SystemGraph` nodes are not links**, which contradicts the accessibility table's "graph nodes
+  are real links in DOM order". There is no page behind "Admin dashboard". The svg is
+  `role="img"` with a generated description instead, and a test asserts the graph contains no
+  anchors.
+- **No federkleid version numbers.** The graph supports an optional version per node and uses it
+  for `ngx-gerber@0.1.1`, which is checkable on npm. federkleid's release numbers are not public,
+  so its nodes carry none. This costs the diagram its sharpest point, since one consumer being
+  deliberately behind is the argument for versioning. Still outstanding.
+- **`--measure-prose` was measured, not assumed.** 68ch rendered 96 characters per line because
+  `ch` is the advance of "0" and Geist's zero is much wider than its average lowercase. It is
+  50ch, measured at 72. The main track is deliberately wider than the prose measure so code
+  blocks, the headline and the Gerber viewer are not squeezed.
+- **No rail on `/` or `/projects`.** A rail carrying one derived count is a section that exists
+  because the template has one. Those pages use the `is-solo` variant, which keeps the shell
+  width and aligns left so the text starts on the same line as the header and the rail elsewhere.
+- **The homepage rail was built and reverted.** Moving role, location and availability into it
+  broke an existing spec asserting availability reads as a sentence rather than a pill, and that
+  spec documents a deliberate earlier decision. The homepage keeps the sentence.
+- **The global reduced-motion rule was wrong.** It shortened durations but left
+  `animation-iteration-count`, so an infinite animation would restart forever and flicker instead
+  of stopping. It now pins the count to 1.

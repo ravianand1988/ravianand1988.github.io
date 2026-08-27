@@ -10,6 +10,8 @@ import {
   assertEntry,
   normalizeDate,
   addHeadingIds,
+  markDecisions,
+  assertOptionalMeta,
   buildRssXml,
   buildSitemapXml,
 } from './lib/content.mjs';
@@ -60,10 +62,13 @@ async function readCollection(dir) {
 
     if (!isPublished(entry)) continue;
     assertEntry(entry, sourcePath);
+    assertOptionalMeta(entry, sourcePath);
 
     // Headings carry ids so the rail's on-this-page list has something to link
-    // to, and so a heading can be deep-linked at all.
-    const { html, headings } = addHeadingIds(await marked.parse(content));
+    // to, and so a heading can be deep-linked at all. Decisions are lifted out
+    // of the prose afterwards, so heading ids are already in place.
+    const parsed = addHeadingIds(await marked.parse(content));
+    const decided = markDecisions(parsed.html);
 
     entries.push({
       slug: entry.slug ? slugify(entry.slug) : slugify(file.replace(/\.md$/, '')),
@@ -71,8 +76,10 @@ async function readCollection(dir) {
       description: entry.description,
       date: entry.date,
       pillar: entry.pillar,
-      html,
-      headings,
+      html: decided.html,
+      headings: parsed.headings,
+      stack: entry.stack ?? [],
+      metrics: (entry.metrics ?? []).map((m) => ({ label: m.label, value: String(m.value) })),
     });
   }
 
@@ -98,6 +105,11 @@ export interface GeneratedHeading {
   level: number;
 }
 
+export interface GeneratedMetric {
+  label: string;
+  value: string;
+}
+
 export interface GeneratedEntry {
   slug: string;
   title: string;
@@ -106,6 +118,8 @@ export interface GeneratedEntry {
   pillar: string;
   html: string;
   headings: GeneratedHeading[];
+  stack: string[];
+  metrics: GeneratedMetric[];
 }
 
 ${toTs('posts', posts)}

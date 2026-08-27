@@ -3,6 +3,16 @@ title: 'federkleid: one design system, three dashboards'
 description: 'Owning the shared Angular design system behind byrd''s Partner, Customer and Admin dashboards, and moving domain state out of per-app code.'
 date: 2026-08-20
 pillar: frontend-architecture
+stack:
+  - 'Angular'
+  - 'TypeScript'
+  - 'Storybook'
+  - 'Versioned npm packages'
+metrics:
+  - label: 'Consuming apps'
+    value: '3'
+  - label: 'Major Angular upgrades'
+    value: '5'
 ---
 
 byrd ran three separate frontend applications: a Customer dashboard, a Partner
