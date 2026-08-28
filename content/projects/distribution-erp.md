@@ -94,6 +94,17 @@ migrations.
 
 Fifteen releases so far, across a hundred-odd pull requests.
 
+## The other engineer was a model
+
+Most of this migration was written alongside Claude Code, and the commit history says
+so rather than quietly not mentioning it. What it bought was not typing speed. It was
+the rules recovery: reading 1,500-line event handlers and turning them into a service
+layer with tests is exactly the tedious, high-attention work where a second reader who
+never gets bored earns its place.
+
+The decisions above are still mine. Staying in C#, deferring Postgres, rejecting
+bidirectional replication. A model does not tell you which trade is the bad one.
+
 ## One box, on purpose
 
 It runs on a single Windows 11 machine behind IIS as a reverse proxy, with the API
