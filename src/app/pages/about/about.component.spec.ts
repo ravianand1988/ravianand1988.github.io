@@ -13,14 +13,16 @@ describe('AboutComponent', () => {
   });
 
   // The cap exists to stop the old thirteen-bullet dump coming back, not to
-  // enforce a particular number. Six is the ceiling now that the backend bullet
-  // earned a place: the Python service work and the Kotlin migration are the
-  // whole reason the page is not a frontend-only story.
+  // enforce a particular number. It was six once the backend bullet earned a
+  // place: the Python service work and the Kotlin migration are the whole
+  // reason the page is not a frontend-only story. Seven now that the Returns
+  // Portal is on the page, which is a build this person led end to end. Raise
+  // it only for another item of that weight.
   it('keeps byrd to a short bullet list', () => {
     const fixture = TestBed.createComponent(AboutComponent);
     fixture.detectChanges();
     const bullets = (fixture.nativeElement as HTMLElement).querySelectorAll('.role-byrd li');
-    expect(bullets.length).toBeLessThanOrEqual(6);
+    expect(bullets.length).toBeLessThanOrEqual(7);
   });
 
   it('has no skills tag cloud', () => {

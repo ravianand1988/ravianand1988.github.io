@@ -3,12 +3,13 @@ import { DomSanitizer } from '@angular/platform-browser';
 import { ContentService } from '../../core/content';
 import { PageRailComponent, RailGroup, RailSection } from '../../layout/page-rail/page-rail.component';
 import { Seo } from '../../core/seo';
+import { ReadDepthDirective } from '../../core/analytics/read-depth.directive';
 
 const MONTH_YEAR = new Intl.DateTimeFormat('en-GB', { month: 'short', year: 'numeric' });
 
 @Component({
   selector: 'app-writing-post',
-  imports: [PageRailComponent],
+  imports: [PageRailComponent, ReadDepthDirective],
   templateUrl: './writing-post.component.html',
 })
 export class WritingPostComponent {

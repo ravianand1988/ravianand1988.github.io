@@ -281,6 +281,41 @@ for (const segments of pagePaths) {
   headingsChecked += levels.length;
 }
 
+// --- Analytics is injected at runtime behind consent, never inlined.
+//
+// The whole consent design rests on gtag.js being appended by the Analytics
+// service after a denied-by-default consent state is in place. Pasting Google's
+// snippet into index.html would set cookies before any visitor agreed to
+// anything, and it would look completely fine locally. So the prerendered HTML
+// is checked for the tag host, and the emitted JS is checked for the ID.
+
+const MEASUREMENT_ID = 'G-D3ZCLSGYT8';
+
+for (const segments of pagePaths) {
+  let markup;
+  try {
+    markup = await html(...segments);
+  } catch {
+    continue;
+  }
+  if (markup.includes('googletagmanager.com')) {
+    const route = `/${segments.slice(0, -1).join('/')}`;
+    failures.push(`${route} inlines the analytics tag, which bypasses the consent gate`);
+  }
+}
+
+const jsFiles = (await readdir(BROWSER_DIR)).filter((name) => extname(name) === '.js');
+let idOccurrences = 0;
+for (const name of jsFiles) {
+  const source = await readFile(join(BROWSER_DIR, name), 'utf8');
+  idOccurrences += source.split(MEASUREMENT_ID).length - 1;
+}
+if (idOccurrences !== 1) {
+  failures.push(
+    `expected the measurement ID exactly once in the emitted JS, found ${idOccurrences}`,
+  );
+}
+
 if (failures.length) {
   console.error('verify-build FAILED:');
   for (const failure of failures) console.error(`  - ${failure}`);
@@ -288,5 +323,5 @@ if (failures.length) {
 }
 
 console.log(
-  `verify-build: 5 static routes, ${writingSlugs.length} posts, ${projectSlugs.length} projects, 404 fallback, feeds at root, ${referenced.size} referenced assets present, no em-dashes, ${headingsChecked} headings in order, no bare fragment links, no stray assets, Person structured data`,
+  `verify-build: 5 static routes, ${writingSlugs.length} posts, ${projectSlugs.length} projects, 404 fallback, feeds at root, ${referenced.size} referenced assets present, no em-dashes, ${headingsChecked} headings in order, no bare fragment links, no stray assets, Person structured data, analytics tag not inlined`,
 );

@@ -48,9 +48,13 @@ installed.
   - `src/app/layout/` — site-header, site-footer, `page-rail` (the metadata rail; takes projected
     content for page-specific controls) and `theme-toggle`.
   - `src/app/core/` — [content.ts](src/app/core/content.ts) (`ContentService`, reads the generated
-    module), [seo.ts](src/app/core/seo.ts) (`Seo`, per-route title, description and canonical) and
-    [theme.ts](src/app/core/theme.ts) (`ThemeService`). Every page calls `Seo.set(...)` in its
-    constructor.
+    module), [seo.ts](src/app/core/seo.ts) (`Seo`, per-route title, description and canonical),
+    [theme.ts](src/app/core/theme.ts) (`ThemeService`) and
+    [analytics/](src/app/core/analytics/) (`Analytics`, which appends `gtag.js` itself behind
+    Consent Mode rather than from `index.html`, and is inert off the production hostname). Every
+    page calls `Seo.set(...)` in its constructor, but note that `writing-post` and
+    `project-detail` call it inside a `computed()`, so their title is only correct after the
+    render following `NavigationEnd`.
   - `src/app/features/gerber-demo/` — the live Gerber viewer. It **imports the published
     `ngx-gerber` package from npm**; it is not a vendored copy. That is deliberate: the case-study
     page is a consumer of the library like any other.
@@ -126,7 +130,9 @@ Two build-time guardrails, both easy to trip:
   skipped heading level, and the `Person` JSON-LD parses with every `sameAs` profile actually
   linked on the page. It also pins numbers quoted on the Gerber page to what the `ngx-gerber`
   package returns, so a dependency upgrade that changed the geometry fails the build instead of
-  publishing a false claim.
+  publishing a false claim. It also asserts that no prerendered page inlines the analytics tag
+  and that the measurement ID appears exactly once in the emitted JS, which is what keeps the
+  consent gate from being bypassed by a pasted snippet.
 
 If you add a claim backed by a number, prefer adding a check here over trusting the prose.
 
@@ -143,6 +149,22 @@ Push to `master` → [.github/workflows/deploy.yml](.github/workflows/deploy.yml
 native Actions deployment. The workflow's artifact path is tied to `outputPath` in
 [angular.json](angular.json); changing one requires changing the other. Repo
 **Settings → Pages** source must stay on **GitHub Actions**.
+
+## Analytics
+
+GA4 property `G-D3ZCLSGYT8`, behind Google Consent Mode v2 with everything denied by default.
+The design is in
+[docs/superpowers/specs/2026-09-07-ga4-analytics-design.md](docs/superpowers/specs/2026-09-07-ga4-analytics-design.md).
+
+Settings that live in the GA4 UI, not in this repo:
+
+- Data retention: 14 months.
+- Google signals: off.
+- Enhanced Measurement, outbound clicks: on. This is where outbound link tracking comes from;
+  there is no code for it.
+- Enhanced Measurement, file downloads: off. Superseded by the `cv_download` event, which would
+  otherwise be counted twice under two names.
+- `cv_download` marked as a key event.
 
 ## Content accuracy
 

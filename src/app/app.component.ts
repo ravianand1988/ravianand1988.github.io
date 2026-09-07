@@ -2,10 +2,11 @@ import { Component } from '@angular/core';
 import { RouterLink, RouterOutlet } from '@angular/router';
 import { SiteHeaderComponent } from './layout/site-header/site-header.component';
 import { SiteFooterComponent } from './layout/site-footer/site-footer.component';
+import { ConsentBannerComponent } from './layout/consent-banner/consent-banner.component';
 
 @Component({
   selector: 'app-root',
-  imports: [RouterLink, RouterOutlet, SiteHeaderComponent, SiteFooterComponent],
+  imports: [RouterLink, RouterOutlet, SiteHeaderComponent, SiteFooterComponent, ConsentBannerComponent],
   // The skip link is the first focusable thing on every page. The target is the
   // router outlet's wrapper rather than a page-owned element, so it keeps
   // working without every page having to remember to provide an anchor.
@@ -20,6 +21,7 @@ import { SiteFooterComponent } from './layout/site-footer/site-footer.component'
       <router-outlet />
     </div>
     <app-site-footer />
+    <app-consent-banner />
   `,
 })
 export class AppComponent {}

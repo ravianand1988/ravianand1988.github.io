@@ -17,6 +17,8 @@ import {
   GerberUnit,
   unitSuffix,
 } from 'ngx-gerber';
+import { Analytics } from '../../core/analytics/analytics';
+import { EVENT } from '../../core/analytics/analytics.config';
 
 /** The Altium paste layer shipped in this site's assets. */
 const SAMPLE_URL = '/assets/samples/PCB1.GBP';
@@ -41,6 +43,7 @@ const GERBER_EXTENSIONS =
 })
 export class GerberDemoComponent {
   protected readonly store = inject(GerberStore);
+  private readonly analytics = inject(Analytics);
   protected readonly accept = GERBER_EXTENSIONS;
   protected readonly GerberUnit = GerberUnit;
 
@@ -74,11 +77,23 @@ export class GerberDemoComponent {
     });
   }
 
+  /**
+   * Counts that a visitor drove the viewer, not how much. trackOnce keeps it to
+   * one event per page view, so panning and re-picking files do not inflate it.
+   * The sample loaded automatically on first render is deliberately not a call
+   * site: nobody asked for it.
+   */
+  private noteInteraction(): void {
+    this.analytics.trackOnce(EVENT.gerberInteraction);
+  }
+
   protected reloadSample(): void {
+    this.noteInteraction();
     void this.store.loadSample(SAMPLE_URL);
   }
 
   protected async onFilePicked(event: Event): Promise<void> {
+    this.noteInteraction();
     const input = event.target as HTMLInputElement;
     const file = input.files?.[0];
     if (file) await this.store.loadFile(file);
@@ -88,6 +103,7 @@ export class GerberDemoComponent {
   }
 
   protected async onDrop(event: DragEvent): Promise<void> {
+    this.noteInteraction();
     event.preventDefault();
     this.dragging.set(false);
 
@@ -96,6 +112,7 @@ export class GerberDemoComponent {
   }
 
   protected onDragOver(event: DragEvent): void {
+    this.noteInteraction();
     event.preventDefault();
     this.dragging.set(true);
   }

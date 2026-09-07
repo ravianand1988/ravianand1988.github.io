@@ -3,6 +3,7 @@ import { DomSanitizer } from '@angular/platform-browser';
 import { ContentService } from '../../core/content';
 import { PageRailComponent, RailGroup, RailSection } from '../../layout/page-rail/page-rail.component';
 import { Seo } from '../../core/seo';
+import { ReadDepthDirective } from '../../core/analytics/read-depth.directive';
 import { GerberDemoComponent } from '../../features/gerber-demo/gerber-demo.component';
 import { SystemGraphComponent } from '../../features/system-graph/system-graph.component';
 import { PROJECT_GRAPHS } from '../../features/system-graph/graphs';
@@ -20,7 +21,13 @@ const MONTH_YEAR = new Intl.DateTimeFormat('en-GB', { month: 'short', year: 'num
 
 @Component({
   selector: 'app-project-detail',
-  imports: [GerberDemoComponent, PageRailComponent, SystemGraphComponent, MetricListComponent],
+  imports: [
+    GerberDemoComponent,
+    PageRailComponent,
+    SystemGraphComponent,
+    MetricListComponent,
+    ReadDepthDirective,
+  ],
   templateUrl: './project-detail.component.html',
 })
 export class ProjectDetailComponent {
