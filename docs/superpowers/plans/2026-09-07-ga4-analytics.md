@@ -1181,36 +1181,44 @@ describe('ReadDepthDirective', () => {
     globalThis.IntersectionObserver = original;
   });
 
-  it('reports read_complete once when the sentinel comes into view', () => {
-    const analytics = TestBed.inject(Analytics);
+  /**
+   * trackOnce is the seam, not track. The directive's contract is that it
+   * reports on intersection and then stops observing; that the event itself is
+   * capped at one per page view is the service's contract, covered in
+   * analytics.spec.ts.
+   */
+  function spyOnTrackOnce(): unknown[][] {
     const sent: unknown[][] = [];
-    analytics.track = (name, params) => {
+    TestBed.inject(Analytics).trackOnce = (name, params) => {
       sent.push([name, params]);
     };
+    return sent;
+  }
+
+  it('reports read_complete when the sentinel comes into view, then stops observing', async () => {
+    const sent = spyOnTrackOnce();
 
     const fixture = TestBed.createComponent(HostComponent);
     fixture.detectChanges();
+    await fixture.whenStable();
 
-    callbacks[0]([{ isIntersecting: true }]);
     callbacks[0]([{ isIntersecting: true }]);
 
     expect(sent).toEqual([['read_complete', { slug: 'gerber-viewer' }]]);
     expect(disconnects).toBeGreaterThan(0);
   });
 
-  it('reports nothing while the sentinel is off screen', () => {
-    const analytics = TestBed.inject(Analytics);
-    const sent: unknown[][] = [];
-    analytics.track = (name, params) => {
-      sent.push([name, params]);
-    };
+  it('reports nothing while the sentinel is off screen', async () => {
+    const sent = spyOnTrackOnce();
 
     const fixture = TestBed.createComponent(HostComponent);
     fixture.detectChanges();
+    await fixture.whenStable();
 
     callbacks[0]([{ isIntersecting: false }]);
 
     expect(sent).toEqual([]);
+    expect(disconnects).toBe(0);
   });
 });
 ```
@@ -1257,8 +1265,11 @@ export class ReadDepthDirective {
 
     const observer = new IntersectionObserver((entries) => {
       if (!entries.some((entry) => entry.isIntersecting)) return;
-      this.analytics.track(EVENT.readComplete, { slug: this.appReadDepth() });
-      observer.disconnect(); // once per page view, not once per scroll
+      // trackOnce, not track: once per page view is a property of the service,
+      // so this does not depend on the observer's disconnect having taken
+      // effect before another entry is delivered.
+      this.analytics.trackOnce(EVENT.readComplete, { slug: this.appReadDepth() });
+      observer.disconnect();
     });
 
     observer.observe(this.element.nativeElement);

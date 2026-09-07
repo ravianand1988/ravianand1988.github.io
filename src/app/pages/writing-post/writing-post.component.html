@@ -5,6 +5,7 @@
     <main class="track-main">
       <h1>{{ entry.title }}</h1>
       <article class="prose" [innerHTML]="body()"></article>
+      <div [appReadDepth]="entry.slug" aria-hidden="true"></div>
     </main>
   </div>
 } @else {
