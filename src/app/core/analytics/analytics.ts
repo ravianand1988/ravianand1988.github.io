@@ -11,7 +11,7 @@ import {
 } from '@angular/core';
 import { NavigationEnd, Router } from '@angular/router';
 import { filter } from 'rxjs/operators';
-import { ANALYTICS_HOST, CONSENT_KEY, MEASUREMENT_ID, isEnabled } from './analytics.config';
+import { ANALYTICS_HOST, CONSENT_KEY, EVENT, MEASUREMENT_ID, isEnabled } from './analytics.config';
 
 export type ConsentChoice = 'granted' | 'denied';
 
@@ -56,6 +56,7 @@ export class Analytics {
     if (this.enabled) {
       this.bootstrapTag();
       this.watchNavigation();
+      this.watchDownloads();
     }
 
     // After hydration, never during it. The prerendered HTML carries no banner,
@@ -153,6 +154,27 @@ export class Analytics {
 
     this.gtag('js', new Date());
     this.gtag('config', MEASUREMENT_ID, { send_page_view: false });
+  }
+
+  /**
+   * One delegated listener rather than markup on the anchor, so the about page
+   * carries no analytics concerns. Matching on the extension survives the CV
+   * file being renamed, which has already happened once.
+   *
+   * This is a custom name rather than GA4's file_download because it is the
+   * closest thing this site has to a conversion and deserves its own row.
+   * Enhanced Measurement's file download tracking is turned off in the property
+   * so this is not counted twice under two names.
+   */
+  private watchDownloads(): void {
+    this.doc.addEventListener('click', (event) => {
+      const target = event.target as Element | null;
+      const anchor = target?.closest?.('a');
+      const href = anchor?.getAttribute('href') ?? '';
+      if (!href.toLowerCase().endsWith('.pdf')) return;
+
+      this.track(EVENT.cvDownload, { file_name: href.split('/').pop() ?? href });
+    });
   }
 
   /**

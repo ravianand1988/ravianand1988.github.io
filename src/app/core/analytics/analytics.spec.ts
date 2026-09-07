@@ -168,6 +168,49 @@ describe('Analytics', () => {
     expect(commands('event').filter((entry) => entry[1] === 'gerber_interaction')).toHaveLength(1);
   });
 
+  it('reports a click on the CV as cv_download', () => {
+    create();
+    const anchor = document.createElement('a');
+    anchor.href = '/assets/Ravi_Anand_Kumar_CV.pdf';
+    anchor.textContent = 'Download my CV';
+    document.body.appendChild(anchor);
+
+    anchor.click();
+
+    expect(commands('event').at(-1)).toEqual([
+      'event',
+      'cv_download',
+      { file_name: 'Ravi_Anand_Kumar_CV.pdf' },
+    ]);
+    anchor.remove();
+  });
+
+  it('reports a click on a child of the CV link, not just the anchor itself', () => {
+    create();
+    const anchor = document.createElement('a');
+    anchor.href = '/assets/Ravi_Anand_Kumar_CV.pdf';
+    const span = document.createElement('span');
+    anchor.appendChild(span);
+    document.body.appendChild(anchor);
+
+    span.click();
+
+    expect(commands('event').at(-1)?.[1]).toBe('cv_download');
+    anchor.remove();
+  });
+
+  it('ignores clicks on ordinary links', () => {
+    create();
+    const anchor = document.createElement('a');
+    anchor.href = '/about';
+    document.body.appendChild(anchor);
+
+    anchor.click();
+
+    expect(commands('event').filter((entry) => entry[1] === 'cv_download')).toHaveLength(0);
+    anchor.remove();
+  });
+
   it('reopen shows the banner again after a choice was made', () => {
     const service = create();
     service.accept();
