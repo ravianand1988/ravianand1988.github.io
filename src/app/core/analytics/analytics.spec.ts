@@ -1,5 +1,7 @@
-import { PLATFORM_ID } from '@angular/core';
+import { ApplicationRef, Component, PLATFORM_ID } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
+import { provideRouter } from '@angular/router';
+import { RouterTestingHarness } from '@angular/router/testing';
 import { Analytics } from './analytics';
 import {
   ANALYTICS_HOST,
@@ -172,5 +174,69 @@ describe('Analytics', () => {
     expect(service.bannerVisible()).toBe(false);
     service.reopen();
     expect(service.bannerVisible()).toBe(true);
+  });
+});
+
+@Component({ template: '<h1>About</h1>' })
+class TestAboutComponent {}
+
+describe('Analytics page views', () => {
+  beforeEach(() => {
+    localStorage.clear();
+    delete (window as TestWindow).dataLayer;
+    delete (window as TestWindow).gtag;
+    for (const script of tagScripts()) script.remove();
+    TestBed.resetTestingModule();
+  });
+
+  afterEach(() => {
+    for (const script of tagScripts()) script.remove();
+  });
+
+  it('sends one page_view per navigation, carrying the current title', async () => {
+    TestBed.configureTestingModule({
+      providers: [
+        { provide: ANALYTICS_HOST, useValue: PRODUCTION_HOST },
+        provideRouter([{ path: 'about', component: TestAboutComponent, title: 'About' }]),
+      ],
+    });
+    const service = TestBed.inject(Analytics);
+    service.init();
+
+    const harness = await RouterTestingHarness.create();
+    await harness.navigateByUrl('/about');
+    // The send is scheduled with afterNextRender, so wait for the render to
+    // settle before asserting. This is also what proves the deferral works.
+    await TestBed.inject(ApplicationRef).whenStable();
+
+    const views = commands('event').filter((entry) => entry[1] === 'page_view');
+    expect(views).toHaveLength(1);
+    expect(views[0][2]).toMatchObject({ page_path: '/about', page_title: 'About' });
+  });
+
+  it('lets a once-per-page-view event fire again after a navigation', async () => {
+    TestBed.configureTestingModule({
+      providers: [
+        { provide: ANALYTICS_HOST, useValue: PRODUCTION_HOST },
+        provideRouter([
+          { path: 'about', component: TestAboutComponent, title: 'About' },
+          { path: 'ai', component: TestAboutComponent, title: 'AI' },
+        ]),
+      ],
+    });
+    const service = TestBed.inject(Analytics);
+    service.init();
+
+    const harness = await RouterTestingHarness.create();
+    await harness.navigateByUrl('/about');
+    await TestBed.inject(ApplicationRef).whenStable();
+    service.trackOnce('gerber_interaction');
+    service.trackOnce('gerber_interaction');
+
+    await harness.navigateByUrl('/ai');
+    await TestBed.inject(ApplicationRef).whenStable();
+    service.trackOnce('gerber_interaction');
+
+    expect(commands('event').filter((entry) => entry[1] === 'gerber_interaction')).toHaveLength(2);
   });
 });

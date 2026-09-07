@@ -1,5 +1,6 @@
 import { isPlatformBrowser } from '@angular/common';
 import {
+  DestroyRef,
   DOCUMENT,
   Injectable,
   Injector,
@@ -8,6 +9,8 @@ import {
   inject,
   signal,
 } from '@angular/core';
+import { NavigationEnd, Router } from '@angular/router';
+import { filter } from 'rxjs/operators';
 import { ANALYTICS_HOST, CONSENT_KEY, MEASUREMENT_ID, isEnabled } from './analytics.config';
 
 export type ConsentChoice = 'granted' | 'denied';
@@ -35,6 +38,7 @@ export class Analytics {
   private readonly injector = inject(Injector);
   private readonly host = inject(ANALYTICS_HOST);
   private readonly isBrowser = isPlatformBrowser(inject(PLATFORM_ID));
+  private readonly destroyRef = inject(DestroyRef);
 
   private enabled = false;
   private readonly sentOnce = new Set<string>();
@@ -49,7 +53,10 @@ export class Analytics {
     this.choice.set(this.readChoice());
     this.enabled = isEnabled(this.isBrowser, this.host);
 
-    if (this.enabled) this.bootstrapTag();
+    if (this.enabled) {
+      this.bootstrapTag();
+      this.watchNavigation();
+    }
 
     // After hydration, never during it. The prerendered HTML carries no banner,
     // so rendering one in the same pass would be a hydration mismatch.
@@ -146,6 +153,55 @@ export class Analytics {
 
     this.gtag('js', new Date());
     this.gtag('config', MEASUREMENT_ID, { send_page_view: false });
+  }
+
+  /**
+   * Router is pulled from the injector here rather than injected in the
+   * constructor on purpose. The banner component's spec and the directive's
+   * spec both inject this service into a TestBed that configures no router, and
+   * a constructor injection would make them fail on a dependency they have no
+   * reason to care about. This runs only when enabled, which is never in a spec
+   * that has not asked for it.
+   */
+  private watchNavigation(): void {
+    const router = this.injector.get(Router);
+    const subscription = router.events
+      .pipe(filter((event): event is NavigationEnd => event instanceof NavigationEnd))
+      .subscribe((event) => {
+        // A new page, so once-per-view events may fire again. Synchronous,
+        // unlike the send below, because it must happen before anything on the
+        // new page has had a chance to call trackOnce.
+        this.sentOnce.clear();
+        this.schedulePageView(event.urlAfterRedirects);
+      });
+    this.destroyRef.onDestroy(() => subscription.unsubscribe());
+  }
+
+  /**
+   * One render later, not now. home and about call Seo.set in their
+   * constructors, so their titles are already correct here. writing-post and
+   * project-detail call it inside a computed that only evaluates when the
+   * template reads it, which is the render after this event. Sending
+   * synchronously would stamp the previous page's title onto every post and
+   * case study, which is the traffic this exists to measure.
+   */
+  private schedulePageView(url: string): void {
+    afterNextRender(() => this.sendPageView(url), { injector: this.injector });
+  }
+
+  /**
+   * The URL comes from the router rather than from window.location. The router
+   * has already resolved redirects by this point, and its value does not depend
+   * on the History API having been flushed, which is what makes this checkable
+   * under RouterTestingHarness.
+   */
+  private sendPageView(url: string): void {
+    const origin = this.doc.defaultView?.location.origin ?? '';
+    this.gtag('event', 'page_view', {
+      page_location: `${origin}${url}`,
+      page_path: url.split(/[?#]/)[0],
+      page_title: this.doc.title,
+    });
   }
 
   private gtag(...args: unknown[]): void {
