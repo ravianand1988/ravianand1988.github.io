@@ -202,7 +202,7 @@ describe('Analytics', () => {
   });
 
   /** Enabled by default, because that is the interesting path. */
-  function create(host = PRODUCTION_HOST, platform: object = 'browser'): Analytics {
+  function create(host = PRODUCTION_HOST, platform = 'browser'): Analytics {
     TestBed.configureTestingModule({
       providers: [
         { provide: ANALYTICS_HOST, useValue: host },
