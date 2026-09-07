@@ -47,8 +47,9 @@ New folder `src/app/core/analytics/`, alongside the existing `content.ts`, `seo.
 
 | File | Responsibility |
 | --- | --- |
-| `analytics.config.ts` | Measurement ID, production hostname, storage key, event names |
-| `analytics.ts` | `Analytics` service and the pure `isEnabled` function |
+| `analytics.config.ts` | Measurement ID, production hostname, storage key, event names, the pure `isEnabled` function and the `ANALYTICS_HOST` token |
+| `analytics.ts` | The `Analytics` service |
+| `provide-analytics.ts` | `provideAnalytics()`, the app initializer that calls `init()` |
 | `read-depth.directive.ts` | IntersectionObserver sentinel for the read-depth event |
 | `analytics.spec.ts` | Unit tests, shaped after `theme.spec.ts` |
 | `read-depth.directive.spec.ts` | Directive tests with a stubbed IntersectionObserver |
@@ -78,8 +79,18 @@ export function isEnabled(isBrowser: boolean, hostname: string): boolean
 jsdom makes `location` awkward to override, so the service reads the hostname once and hands
 it to this function. The function is the unit under test, not the service's environment.
 
-Because the hostname guard fails under test, no spec in the repo ever contacts Google, and
-the existing `gerber-demo.integration.spec.ts` keeps passing untouched.
+Because the hostname guard fails under test, no spec in the repo ever contacts Google.
+
+`Router` is resolved from an `Injector` inside the navigation watcher rather than injected in
+the constructor. The banner component's spec and the directive's spec both inject `Analytics`
+into a TestBed that configures no router, and a constructor injection would make them fail on
+a dependency they have no reason to care about.
+
+**The switch gates the tag, not the banner.** Consent state and the banner are live in any
+browser, including `npm start` on localhost, so the banner can be developed and its contrast
+checked without deploying. What `isEnabled` decides is only whether `gtag.js` is appended and
+whether events are sent. Accepting on localhost therefore stores the choice and pushes
+nothing, which is also what makes the banner's own component spec straightforward.
 
 ## Consent flow
 
@@ -144,9 +155,15 @@ copy carries no em-dashes and no `h1`, so the existing `verify-build.mjs` rules 
 | `gerber_interaction` | `gerber-demo.component.ts` | At most once per page view |
 
 **Page views.** GA is configured with `send_page_view: false`, so the service owns every one
-of them. Reading `document.title` at `NavigationEnd` is correct because each page calls
-`Seo.set(...)` in its constructor, which runs during route activation, before that event
-fires.
+of them.
+
+The send is scheduled with `afterNextRender`, not made synchronously in the `NavigationEnd`
+handler. `home` and `about` call `Seo.set(...)` in their constructors, which run during route
+activation and are therefore already correct at `NavigationEnd`. But `writing-post` and
+`project-detail` call it inside a `computed()` that only evaluates when the template reads it,
+which happens during the render that follows. Sending synchronously would stamp the previous
+page's title onto every post and case study, which is precisely the traffic this is being
+installed to measure.
 
 **CV download.** One delegated listener on the document, not markup on the anchor, so the
 about page stays free of analytics concerns. It is a custom event name rather than GA4's
@@ -160,7 +177,15 @@ sentinel placed after the article's last paragraph in `writing-post` and `projec
 measures what was actually asked about. Fires once per page view.
 
 **Gerber interaction.** One call in the component's existing handlers, on the first of: opening
-a file, reloading the sample, or the first drag. Not per pointer move.
+a file, reloading the sample, or dragging a file over the stage. Not per pointer move.
+
+The once-per-page-view rule lives in the service as `trackOnce(name)`, not as a boolean field
+on the component. `gerber-demo.integration.spec.ts` is a pure parser test that never renders
+the component, and standing up a jsdom rendering harness for `ngx-gerber`'s canvas to cover one
+boolean would cost far more than it proves. In the service the same rule is covered by an
+ordinary unit test, and it becomes reusable if a second once-per-view event is ever added. The
+set of already-sent names is cleared on each `NavigationEnd`, which is what makes it per view
+rather than per session.
 
 ## Testing
 
@@ -173,7 +198,9 @@ a file, reloading the sample, or the first drag. Not per pointer move.
 - Accept pushes `consent update` with `analytics_storage: 'granted'` and leaves the ad
   signals denied.
 - `track()` no-ops when disabled.
-- One `NavigationEnd` produces exactly one `page_view`, carrying the current title.
+- One `NavigationEnd` produces exactly one `page_view`, carrying the title as it stands after
+  the render, not before it.
+- `trackOnce` sends once within a page view and again after the next navigation.
 
 `consent-banner.component.spec.ts`: hidden when a choice is stored, visible when it is not,
 and each button writes the right value and dismisses.
