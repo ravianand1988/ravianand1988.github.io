@@ -1,0 +1,53 @@
+// Tokens only, so both themes stay correct and verify-contrast keeps covering
+// this text through the pairs it already walks.
+.banner {
+  position: fixed;
+  inset-inline: 0;
+  bottom: 0;
+  z-index: 10;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-2);
+  padding: var(--space-2) var(--space-3);
+  background: var(--panel);
+  border-top: 1px solid var(--border);
+}
+
+.copy {
+  margin: 0;
+  max-width: 62ch;
+  color: var(--ink-muted);
+  font-size: 0.86rem;
+}
+
+.actions {
+  display: flex;
+  gap: var(--space-2);
+}
+
+// Equal weight on both. The refusal is not a smaller, greyer control.
+.choice {
+  padding: 0.35rem 0.9rem;
+  border: 1px solid var(--border);
+  border-radius: 3px;
+  background: transparent;
+  color: var(--ink);
+  font-family: var(--font-mono);
+  font-size: 0.76rem;
+  letter-spacing: 0.06em;
+  cursor: pointer;
+  transition:
+    color 0.12s ease,
+    border-color 0.12s ease;
+}
+
+.choice:hover {
+  border-color: var(--meta);
+}
+
+.choice:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}

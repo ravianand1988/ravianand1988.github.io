@@ -811,7 +811,10 @@ describe('ConsentBannerComponent', () => {
     const { fixture, analytics } = render();
     analytics.reopen();
     fixture.detectChanges();
-    expect((fixture.nativeElement as HTMLElement).textContent).not.toContain('—');
+    // Built from its code point, not typed: verify-build scans authored source
+    // for the character, so a literal one here would fail the build it guards.
+    const emDash = String.fromCharCode(0x2014);
+    expect((fixture.nativeElement as HTMLElement).textContent).not.toContain(emDash);
   });
 });
 ```

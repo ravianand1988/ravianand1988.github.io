@@ -14,3 +14,15 @@
   font-family: var(--font-mono);
   font-size: 0.82rem;
 }
+
+// A button, not a link: it changes state on this page rather than going
+// anywhere. It matches the links so the row still reads as one list.
+.as-link {
+  padding: 0;
+  border: 0;
+  background: none;
+  color: inherit;
+  font: inherit;
+  text-decoration: underline;
+  cursor: pointer;
+}

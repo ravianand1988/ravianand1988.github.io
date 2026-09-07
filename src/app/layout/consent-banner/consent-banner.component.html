@@ -1,0 +1,17 @@
+@if (analytics.bannerVisible()) {
+  <aside class="banner" role="region" aria-label="Analytics choice">
+    <p class="copy">
+      This site counts page views and a few interactions, such as opening my CV, so I can tell
+      which writing is worth continuing. Nothing is stored on your device unless you accept, and
+      Google Analytics is the processor.
+      <a href="https://policies.google.com/privacy" target="_blank" rel="noopener">
+        Google's privacy policy
+      </a>
+    </p>
+
+    <div class="actions">
+      <button type="button" class="choice" (click)="analytics.decline()">Decline</button>
+      <button type="button" class="choice" (click)="analytics.accept()">Accept</button>
+    </div>
+  </aside>
+}
