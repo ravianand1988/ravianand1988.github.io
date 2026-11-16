@@ -12,5 +12,19 @@
     } @empty {
       <p>Nothing here yet.</p>
     }
+
+    <h2 id="playground">Playground</h2>
+    <p>Smaller things I build to stay sharp across frameworks. Each one runs live, and the source is on GitHub.</p>
+    @for (item of playground; track item.source) {
+      <div class="row">
+        <span class="row-title">{{ item.title }}</span>
+        <span class="row-desc">{{ item.description }}</span>
+        <span class="row-meta">
+          <a [href]="item.live" target="_blank" rel="noopener">Live</a>
+          ·
+          <a [href]="item.source" target="_blank" rel="noopener">Source</a>
+        </span>
+      </div>
+    }
   </main>
 </div>
